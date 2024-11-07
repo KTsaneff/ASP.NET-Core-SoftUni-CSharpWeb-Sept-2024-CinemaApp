@@ -29,6 +29,23 @@
 
         [HttpGet]
         [Authorize]
+        public async Task<IActionResult> Manage()
+        {
+            bool isManager = await this.IsUserManagerAsync();
+            if (!isManager)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            IEnumerable<AllMoviesIndexViewModel> allMovies =
+                await this.movieService.GetAllMoviesAsync();
+
+            return this.View(allMovies);
+        }
+
+
+        [HttpGet]
+        [Authorize]
 #pragma warning disable CS1998
         public async Task<IActionResult> Create()
 #pragma warning restore CS1998
