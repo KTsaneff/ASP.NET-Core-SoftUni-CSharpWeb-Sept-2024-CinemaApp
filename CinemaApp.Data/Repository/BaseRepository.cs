@@ -136,5 +136,18 @@
                 return false;
             }
         }
+
+        public async Task<TType> FindByConditionsAsync(Expression<Func<TType, bool>> predicate)
+        {
+            TType entity = await this.dbSet
+                .FirstOrDefaultAsync(predicate);
+
+            return entity;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await this.dbContext.SaveChangesAsync();
+        }
     }
 }

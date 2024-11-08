@@ -13,5 +13,7 @@
         Task<EditCinemaFormModel?> GetCinemaForEditByIdAsync(Guid id);
 
         Task<bool> EditCinemaAsync(EditCinemaFormModel model);
+
+        Task<CinemaProgramViewModel?> GetCinemaProgramByIdAsync(Guid id);
     }
 }

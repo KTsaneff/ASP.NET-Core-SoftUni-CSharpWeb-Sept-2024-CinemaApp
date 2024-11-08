@@ -135,7 +135,8 @@
                         entitiesToAdd.Add(new CinemaMovie()
                         {
                             Cinema = cinema,
-                            Movie = movie
+                            Movie = movie,
+                            AvailableTickets = 0
                         });
                     }
                     else

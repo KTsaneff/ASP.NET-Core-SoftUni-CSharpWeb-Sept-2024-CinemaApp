@@ -2,23 +2,31 @@
 @model IEnumerable<CinemaIndexViewModel>
 
 @{
-    ViewData["Title"] = "All Cinemas";
+    ViewData["Title"] = "Cinemas";
 }
 
-<h2>Cinemas</h2>
+<h2 class="my-4 text-center">Cinemas</h2>
 
-<div class="row">
-    @foreach (CinemaIndexViewModel cinema in Model)
-    {
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <img src="~/images/cinema_logo.png" class="card-img-top" alt="Cinema Image" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">@cinema.Name</h5>
-                    <p class="card-text">@cinema.Location</p>
-                    <a asp-action="Details" asp-route-id="@cinema.Id" class="btn btn-primary">View Movie Program</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+<table class="table table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Location</th>
+            <th scope="col" class="text-center">Program</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cinema in Model)
+        {
+            <tr>
+                <td>@cinema.Name</td>
+                <td>@cinema.Location</td>
+                <td class="text-center">
+                    <a asp-controller="Cinema" asp-action="ViewProgram" asp-route-id="@cinema.Id" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> View Program
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

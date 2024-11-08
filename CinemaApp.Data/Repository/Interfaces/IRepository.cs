@@ -33,5 +33,9 @@
         bool Update(TType item);
 
         Task<bool> UpdateAsync(TType item);
+
+        Task<TType> FindByConditionsAsync(Expression<Func<TType, bool>> predicate);
+
+        Task SaveChangesAsync();
     }
 }

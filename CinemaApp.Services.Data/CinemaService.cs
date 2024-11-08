@@ -84,5 +84,41 @@
             bool result = await this.cinemaRepository.UpdateAsync(cinemaEntity);
             return result;
         }
+
+        public async Task<CinemaProgramViewModel?> GetCinemaProgramByIdAsync(Guid id)
+        {
+            Cinema? cinema = await this.cinemaRepository
+                .GetAllAttached()
+                .Include(c => c.CinemaMovies)
+                .ThenInclude(cm => cm.Movie)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            CinemaProgramViewModel? viewModel = null;
+            if (cinema != null)
+            {
+                viewModel = new CinemaProgramViewModel()
+                {
+                    Id = cinema.Id.ToString(),
+                    Name = cinema.Name,
+                    Location = cinema.Location,
+                    Movies = cinema.CinemaMovies
+                        .Where(cm => !cm.IsDeleted)
+                        .Select(cm => new MovieInCinemaViewModel
+                        {
+                            Id = cm.Movie.Id.ToString(),
+                            CinemaId = cm.CinemaId.ToString(),
+                            Title = cm.Movie.Title,
+                            Genre = cm.Movie.Genre,
+                            Duration = $"{cm.Movie.Duration} min",
+                            Description = cm.Movie.Description,
+                            AvailableTickets = cm.AvailableTickets
+                        })
+                        .ToList()
+                };
+            }
+
+            return viewModel;
+        }
+
     }
 }

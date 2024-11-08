@@ -147,5 +147,20 @@
 
             return this.RedirectToAction(nameof(Details), "Cinema", new { id = formModel.Id });
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ViewProgram(Guid id)
+        {
+           bool isManager = await this.IsUserManagerAsync();
+            if (isManager)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            CinemaProgramViewModel? viewModel = await this.cinemaService.GetCinemaProgramByIdAsync(id);
+
+            return this.View(viewModel);
+        }
     }
 }

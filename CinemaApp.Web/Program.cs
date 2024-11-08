@@ -10,6 +10,7 @@ namespace CinemaApp.Web
     using Services.Data.Interfaces;
     using Services.Mapping;
     using ViewModels;
+    using Microsoft.AspNetCore.Builder;
 
     public class Program
     {
@@ -38,6 +39,9 @@ namespace CinemaApp.Web
             builder.Services.ConfigureApplicationCookie(cfg =>
             {
                 cfg.LoginPath = "/Identity/Account/Login";
+                cfg.Cookie.HttpOnly = true;
+                cfg.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                cfg.Cookie.SameSite = SameSiteMode.Strict;
             });
 
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
@@ -51,12 +55,11 @@ namespace CinemaApp.Web
             WebApplication app = builder.Build();
             
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
-            
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

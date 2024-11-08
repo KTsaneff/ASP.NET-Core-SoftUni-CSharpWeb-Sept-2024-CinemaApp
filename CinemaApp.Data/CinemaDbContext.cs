@@ -10,12 +10,12 @@
 
     public class CinemaDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
-        public CinemaDbContext()
-        {
+        //public CinemaDbContext()
+        //{
             
-        }
+        //}
 
-        public CinemaDbContext(DbContextOptions options)
+        public CinemaDbContext(DbContextOptions<CinemaDbContext> options)
             : base(options)
         {
             
