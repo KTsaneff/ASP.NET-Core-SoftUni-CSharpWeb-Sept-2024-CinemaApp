@@ -1,17 +1,15 @@
 namespace CinemaApp.Web
 {
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-
+    using CinemaApp.Data.Configuration;
     using Data;
     using Data.Models;
     using Infrastructure.Extensions;
-    using Services.Data;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Services.Data.Interfaces;
     using Services.Mapping;
     using ViewModels;
-    using Microsoft.AspNetCore.Builder;
-    using CinemaApp.Data.Configuration;
 
     public class Program
     {
