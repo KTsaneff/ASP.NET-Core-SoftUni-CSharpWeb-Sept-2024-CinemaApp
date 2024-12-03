@@ -17,49 +17,7 @@
         {
             this.ticketService = ticketService;
             this.cinemaService = cinemaService;
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> BuyTicket(Guid cinemaId, Guid movieId)
-        {
-            var userId = this.User.GetUserId();
-
-            bool isManager = await this.IsUserManagerAsync();
-
-            if (string.IsNullOrWhiteSpace(userId) || isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            var viewModel = new BuyTicketViewModel
-            {
-                CinemaId = cinemaId,
-                MovieId = movieId,
-                UserId = Guid.Parse(userId)
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            bool result = await this.ticketService.BuyTicketAsync(model);
-            if (!result)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to purchase ticket. Please try again.");
-                return View(model);
-            }
-
-            return RedirectToAction(nameof(MyTickets));
-        }
+        }        
 
         [HttpGet]
         [Authorize]
@@ -125,7 +83,7 @@
                 return View(model);
             }
 
-            bool result = await this.ticketService.SetAvailableTicketsAsync(model.CinemaId, model.MovieId, model.AvailableTickets);
+            bool result = await this.ticketService.SetAvailableTicketsAsync(model);
             if (!result)
             {
                 ModelState.AddModelError(string.Empty, "Unable to set available tickets. Please try again.");

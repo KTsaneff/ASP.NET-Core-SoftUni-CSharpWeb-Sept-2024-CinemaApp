@@ -17,7 +17,6 @@
 
         public async Task<bool> IsUserManagerAsync(string? userId)
         {
-            // Not a valid use-case, but we write defensive programming
             if (String.IsNullOrWhiteSpace(userId))
             {
                 return false;

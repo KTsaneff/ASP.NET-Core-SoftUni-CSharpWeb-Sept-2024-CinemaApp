@@ -26,29 +26,38 @@ namespace CinemaApp.Services.Data
             this.cinemaMovieRepository = cinemaMovieRepository;
         }
 
-        public async Task<bool> BuyTicketAsync(BuyTicketViewModel model)
+        public async Task<bool> BuyTicketAsync(BuyTicketViewModel model, Guid userId)
         {
-            var cinema = await this.cinemaRepository.GetByIdAsync(model.CinemaId);
-            var movie = await this.movieRepository.GetByIdAsync(model.MovieId);
+            var cinemaMovie = await this.cinemaMovieRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(cm => cm.MovieId == model.MovieId && cm.CinemaId == model.CinemaId);
 
-            if (cinema == null || movie == null)
+            if (cinemaMovie == null || cinemaMovie.AvailableTickets < model.Quantity)
             {
                 return false;
             }
 
-            var ticket = new Ticket
+            for (int i = 0; i < model.Quantity; i++)
             {
-                CinemaId = model.CinemaId,
-                MovieId = model.MovieId,
-                UserId = model.UserId,
-                Price = model.Price
-            };
+                var ticket = new Ticket
+                {
+                    Id = Guid.NewGuid(),
+                    CinemaId = model.CinemaId,
+                    MovieId = model.MovieId,
+                    UserId = userId
+                };
 
-            await this.ticketRepository.AddAsync(ticket);
-            await DecreaseAvailableTicketsAsync(model.CinemaId, model.MovieId, model.NumberOfTickets);
+                await this.ticketRepository.AddAsync(ticket);
+            }
+
+            cinemaMovie.AvailableTickets -= model.Quantity;
+
+            await this.cinemaMovieRepository.SaveChangesAsync();
+            await this.ticketRepository.SaveChangesAsync();
 
             return true;
         }
+
         public async Task<IEnumerable<UserTicketViewModel>> GetUserTicketsAsync(Guid userId)
         {
             return await this.ticketRepository
@@ -57,18 +66,18 @@ namespace CinemaApp.Services.Data
                 .To<UserTicketViewModel>()
                 .ToArrayAsync();
         }
-        public async Task<bool> SetAvailableTicketsAsync(Guid cinemaId, Guid movieId, int availableTickets)
+        public async Task<bool> SetAvailableTicketsAsync(SetAvailableTicketsViewModel model)
         {
             var cinemaMovie = await this.cinemaMovieRepository
                 .GetAllAttached()
-                .FirstOrDefaultAsync(cm => cm.CinemaId == cinemaId && cm.MovieId == movieId);
+                .FirstOrDefaultAsync(cm => cm.CinemaId == model.CinemaId && cm.MovieId == model.MovieId);
 
             if (cinemaMovie == null)
             {
                 return false;
             }
 
-            cinemaMovie.AvailableTickets = availableTickets;
+            cinemaMovie.AvailableTickets = model.AvailableTickets;
             await this.cinemaMovieRepository.SaveChangesAsync();
 
             return true;

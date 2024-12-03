@@ -1,10 +1,8 @@
-﻿using CinemaApp.Data.Models;
-using CinemaApp.Services.Data.Interfaces;
+﻿using CinemaApp.Services.Data.Interfaces;
 using CinemaApp.Web.Infrastructure.Extensions;
 using CinemaApp.Web.ViewModels.Tickets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CinemaApp.Web.Controllers
 {
@@ -74,39 +72,5 @@ namespace CinemaApp.Web.Controllers
             return Ok("Ticket availability updated successfully.");
         }
 
-        [HttpPost("BuyTicket")]
-        public async Task<IActionResult> BuyTicket([FromBody] BuyTicketRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var userId = this.User.GetUserId();
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return Unauthorized("User is not authenticated.");
-            }
-
-            if (await IsUserManagerAsync())
-            {
-                return Forbid("Managers are not allowed to buy tickets.");
-            }
-
-            var viewModel = new BuyTicketViewModel
-            {
-                CinemaId = request.CinemaId,
-                MovieId = request.MovieId,
-                Quantity = request.Quantity
-            };
-
-            var result = await this.ticketService.BuyTicketAsync(viewModel, Guid.Parse(userId));
-            if (!result)
-            {
-                return BadRequest("Failed to purchase tickets. Not enough tickets available.");
-            }
-
-            return Ok("Ticket(s) purchased successfully.");
-        }
     }
 }

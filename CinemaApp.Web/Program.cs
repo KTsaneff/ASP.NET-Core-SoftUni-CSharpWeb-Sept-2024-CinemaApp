@@ -11,6 +11,7 @@ namespace CinemaApp.Web
     using Services.Mapping;
     using ViewModels;
     using Microsoft.AspNetCore.Builder;
+    using CinemaApp.Data.Configuration;
 
     public class Program
     {
@@ -19,7 +20,6 @@ namespace CinemaApp.Web
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             string connectionString = builder.Configuration.GetConnectionString("SQLServer")!;
 
-            // Add services to the container.
             builder.Services
                 .AddDbContext<CinemaDbContext>(options =>
                 {
@@ -51,10 +51,17 @@ namespace CinemaApp.Web
             builder.Services.AddRazorPages();
 
             WebApplication app = builder.Build();
-            
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                DatabaseSeeder.SeedRoles(services);
+                DatabaseSeeder.AssignAdminRole(services);
+            }
+
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -66,14 +73,32 @@ namespace CinemaApp.Web
 
             app.UseRouting();
 
-            // Authorization can work only if we know who uses the application -> We need Authentication
-            app.UseAuthentication(); // First -> Who am I?
-            app.UseAuthorization(); // Second -> What can I do?
+            app.UseAuthentication();
+
+            app.Use((context, next) =>
+            {
+                // Middleware to redirect Admins
+                if (context.User.Identity?.IsAuthenticated == true && context.Request.Path == "/")
+                {
+                    if (context.User.IsInRole("Admin"))
+                    {
+                        context.Response.Redirect("/Admin/Home/Index");
+                        return Task.CompletedTask;
+                    }
+                }
+                return next();
+            });
+
+            app.UseAuthorization();
+
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages(); // Add routing to Identity Razor Pages
+            app.MapRazorPages();
 
             app.ApplyMigrations();
 

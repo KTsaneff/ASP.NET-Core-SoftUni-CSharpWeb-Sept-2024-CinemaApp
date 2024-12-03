@@ -22,7 +22,10 @@
                             <p class="card-text text-justify" style="font-size: 0.9rem;">@movie.Description</p>
                         </div>
                         <div class="card-footer bg-transparent text-center">
-                            <a asp-action="BuyTicket" asp-controller="Tickets" asp-route-cinemaId="@Model.Id" asp-route-movieId="@movie.Id" class="btn btn-success btn-sm w-75">
+                            <a href="javascript:void(0)"
+                               class="btn btn-success btn-sm w-75 buy-ticket-btn"
+                               data-cinema-id="@Model.Id"
+                               data-movie-id="@movie.Id">
                                 <i class="bi bi-ticket-perforated-fill"></i> Buy Ticket
                             </a>
                         </div>
@@ -42,3 +45,7 @@
         <i class="bi bi-arrow-left-circle"></i> Back to Cinemas
     </a>
 </div>
+
+@await Html.PartialAsync("~/Views/Ticket/_BuyTicketModal.cshtml")
+
+
