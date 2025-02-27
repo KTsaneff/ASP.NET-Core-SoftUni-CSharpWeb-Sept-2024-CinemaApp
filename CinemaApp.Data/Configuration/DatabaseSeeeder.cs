@@ -33,6 +33,9 @@ namespace CinemaApp.Data.Configuration
             string adminEmail = "admin@example.com";
             string adminPassword = "Admin@123";
 
+            string managerEmail = "manager@cinemaapp.com";
+            string managerPassword = "123asd";
+
             var adminUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
             if (adminUser == null)
             {
