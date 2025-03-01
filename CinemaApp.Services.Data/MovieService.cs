@@ -157,5 +157,13 @@
 
             return true;
         }
+
+        public async Task<IEnumerable<MovieIndexViewModel>> GetAllMoviesForAdminAsync()
+        {
+            return await this.movieRepository
+                .GetAllAttached()
+                .To<MovieIndexViewModel>()
+                .ToArrayAsync();
+        }
     }
 }

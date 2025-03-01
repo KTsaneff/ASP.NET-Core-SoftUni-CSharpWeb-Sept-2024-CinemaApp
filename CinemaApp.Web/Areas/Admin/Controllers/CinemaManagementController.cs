@@ -8,11 +8,11 @@
 
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
-    public class CinemaController : Controller
+    public class CinemaManagementController : Controller
     {
         private readonly ICinemaService cinemaService;
 
-        public CinemaController(ICinemaService cinemaService)
+        public CinemaManagementController(ICinemaService cinemaService)
         {
             this.cinemaService = cinemaService;
         }
