@@ -97,7 +97,7 @@ namespace CinemaApp.Web.Controllers
             {
                 CinemaId = request.CinemaId,
                 MovieId = request.MovieId,
-                Quantity = request.Quantity
+                NumberOfTickets = request.Quantity
             };
 
             var result = await this.ticketService.BuyTicketAsync(viewModel, Guid.Parse(userId));

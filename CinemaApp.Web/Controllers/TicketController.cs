@@ -17,7 +17,7 @@
         {
             this.ticketService = ticketService;
             this.cinemaService = cinemaService;
-        }        
+        }
 
         [HttpGet]
         [Authorize]
@@ -25,7 +25,7 @@
         {
             Guid userId = Guid.Parse(this.User.GetUserId());
 
-            if(userId == Guid.Empty)
+            if (userId == Guid.Empty)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -91,6 +91,52 @@
             }
 
             return RedirectToAction(nameof(Manage));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> BuyTicket(Guid cinemaId, Guid movieId)
+        {
+            var userId = this.User.GetUserId();
+
+            bool isManager = await this.IsUserManagerAsync();
+
+            if (string.IsNullOrWhiteSpace(userId) || isManager)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var viewModel = new BuyTicketViewModel
+            {
+                CinemaId = cinemaId,
+                MovieId = movieId,
+                UserId = Guid.Parse(userId)
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
+        {
+            var userId = this.User.GetUserId();
+            bool isManager = await this.IsUserManagerAsync();
+            if (string.IsNullOrWhiteSpace(userId) || isManager)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            bool result = await this.ticketService.BuyTicketAsync(model, Guid.Parse(userId));
+            if (!result)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to buy ticket. Please try again.");
+                return View(model);
+            }
+            return RedirectToAction(nameof(MyTickets));
         }
     }
 }

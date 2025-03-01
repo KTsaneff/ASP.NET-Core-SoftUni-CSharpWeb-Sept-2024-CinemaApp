@@ -1,12 +1,8 @@
-﻿@using CinemaApp.Services.Data.Interfaces
-@using CinemaApp.Web.Infrastructure.Extensions
-@using static CinemaApp.Common.ApplicationConstants
+﻿@using static CinemaApp.Common.ApplicationConstants
 
-@inject IManagerService managerService
 @{
     int currentYear = DateTime.UtcNow.Year;
-    string footerNote = (ReleaseYear == currentYear) ?
-        $"{currentYear}" : $"{ReleaseYear} - {currentYear}";
+    string footerNote = (ReleaseYear == currentYear) ? $"{currentYear}" : $"{ReleaseYear} - {currentYear}";
 }
 
 <!DOCTYPE html>
@@ -22,59 +18,80 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CinemaWebApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold text-warning" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-camera-reels-fill"></i> CinemaWebApp
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (this.User?.Identity?.IsAuthenticated ?? false)
+                        @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            if (await this.managerService.IsUserManagerAsync(this.User.GetUserId()))
+                            @if (User.IsInRole("Manager"))
                             {
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="managerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Manager
+                                    <a class="nav-link dropdown-toggle text-light fw-bold" href="#" id="manageDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-tools"></i> Manage
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="managerDropdown">
+                                    <ul class="dropdown-menu dropdown-menu-dark border-0">
                                         <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Cinema" asp-action="Manage">Manage Cinemas</a>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Cinema" asp-action="Manage">
+                                                <i class="bi bi-building"></i> Cofigure Cinemas
+                                            </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Movie" asp-action="Manage">Manage Movies</a>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Movie" asp-action="Manage">
+                                                <i class="bi bi-camera-reels"></i> Configure Movies
+                                            </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="Manage">Manage Tickets</a>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Ticket" asp-action="Manage">
+                                                <i class="bi bi-ticket-detailed"></i> Configure Tickets
+                                            </a>
                                         </li>
                                     </ul>
                                 </li>
                             }
-                            else
+                            else if (User.IsInRole("User"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Cinema" asp-action="Index">Cinemas</a>
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Cinema" asp-action="Index">
+                                        <i class="bi bi-film"></i> Cinemas
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="Index">Movies</a>
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Movie" asp-action="Index">
+                                        <i class="bi bi-camera-reels"></i> Movies
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Watchlist" asp-action="Index">Watchlist</a>
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Tickets" asp-action="Index">
+                                        <i class="bi bi-ticket-perforated"></i> Tickets
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Watchlist" asp-action="Index">
+                                        <i class="bi bi-bookmark-star"></i> Watchlist
+                                    </a>
                                 </li>
                             }
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Cinema" asp-action="Index">Cinemas</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="Cinema" asp-action="Index">
+                                    <i class="bi bi-film"></i> Cinemas
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="Index">Movies</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="Movie" asp-action="Index">
+                                    <i class="bi bi-camera-reels"></i> Movies
+                                </a>
                             </li>
                         }
                     </ul>

@@ -1,6 +1,7 @@
 ﻿using CinemaApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CinemaApp.Data.Configuration
 {
@@ -30,37 +31,37 @@ namespace CinemaApp.Data.Configuration
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            string adminEmail = "admin@example.com";
-            string adminPassword = "Admin@123";
+            SeedUser(userManager, "admin@example.com", "Admin@123", "Admin");
+            SeedUser(userManager, "appManager@example.com", "123asd", "Manager");
+            SeedUser(userManager, "appUser@example.com", "123asd", "User");
+        }
 
-            string managerEmail = "manager@cinemaapp.com";
-            string managerPassword = "123asd";
-
-            var adminUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
-            if (adminUser == null)
+        private static void SeedUser(UserManager<ApplicationUser> userManager, string email, string password, string role)
+        {
+            var user = userManager.FindByEmailAsync(email).GetAwaiter().GetResult();
+            if (user == null)
             {
-                adminUser = new ApplicationUser
+                user = new ApplicationUser
                 {
-                    UserName = adminEmail,
-                    Email = adminEmail
+                    UserName = email,
+                    Email = email
                 };
-                var createUserResult = userManager.CreateAsync(adminUser, adminPassword).GetAwaiter().GetResult();
+                var createUserResult = userManager.CreateAsync(user, password).GetAwaiter().GetResult();
                 if (!createUserResult.Succeeded)
                 {
-                    throw new Exception($"Failed to create admin user: {adminEmail}");
+                    throw new Exception($"Failed to create user: {email}");
                 }
             }
 
-            var isInRole = userManager.IsInRoleAsync(adminUser, "Admin").GetAwaiter().GetResult();
+            var isInRole = userManager.IsInRoleAsync(user, role).GetAwaiter().GetResult();
             if (!isInRole)
             {
-                var addRoleResult = userManager.AddToRoleAsync(adminUser, "Admin").GetAwaiter().GetResult();
+                var addRoleResult = userManager.AddToRoleAsync(user, role).GetAwaiter().GetResult();
                 if (!addRoleResult.Succeeded)
                 {
-                    throw new Exception($"Failed to assign admin role to user: {adminEmail}");
+                    throw new Exception($"Failed to assign {role} role to user: {email}");
                 }
             }
         }
-
     }
 }

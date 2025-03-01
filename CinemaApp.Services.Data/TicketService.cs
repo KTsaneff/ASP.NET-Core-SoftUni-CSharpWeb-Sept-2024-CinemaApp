@@ -32,12 +32,12 @@ namespace CinemaApp.Services.Data
                 .GetAllAttached()
                 .FirstOrDefaultAsync(cm => cm.MovieId == model.MovieId && cm.CinemaId == model.CinemaId);
 
-            if (cinemaMovie == null || cinemaMovie.AvailableTickets < model.Quantity)
+            if (cinemaMovie == null || cinemaMovie.AvailableTickets < model.NumberOfTickets)
             {
                 return false;
             }
 
-            for (int i = 0; i < model.Quantity; i++)
+            for (int i = 0; i < model.NumberOfTickets; i++)
             {
                 var ticket = new Ticket
                 {
@@ -50,7 +50,7 @@ namespace CinemaApp.Services.Data
                 await this.ticketRepository.AddAsync(ticket);
             }
 
-            cinemaMovie.AvailableTickets -= model.Quantity;
+            cinemaMovie.AvailableTickets -= model.NumberOfTickets;
 
             await this.cinemaMovieRepository.SaveChangesAsync();
             await this.ticketRepository.SaveChangesAsync();
