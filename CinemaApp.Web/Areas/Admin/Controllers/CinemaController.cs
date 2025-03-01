@@ -26,11 +26,10 @@
             return this.View(cinemas);
         }
 
-        // GET: Show Create Cinema Form
         [HttpGet]
         public IActionResult Create()
         {
-            return this.View();
+            return this.View(new AddCinemaFormModel());
         }
 
         [HttpPost]
@@ -42,10 +41,11 @@
             }
 
             await this.cinemaService.AddCinemaAsync(model);
+
+            TempData["SuccessMessage"] = $"Cinema '{model.Name}' added successfully!";
             return this.RedirectToAction(nameof(Manage));
         }
 
-        // GET: Show Edit Cinema Form
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {

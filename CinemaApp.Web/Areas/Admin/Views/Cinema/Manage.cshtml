@@ -9,7 +9,10 @@
     <h1 class="text-center text-warning fw-bold">Manage Cinemas</h1>
     <p class="text-center text-muted">View, edit, or delete cinema entries.</p>
 
-    <div class="d-flex justify-content-end mb-4">
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="btn btn-secondary fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
         <a asp-action="Create" class="btn btn-success fw-bold shadow-lg">
             <i class="bi bi-plus-circle"></i> Add New Cinema
         </a>
