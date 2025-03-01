@@ -68,21 +68,25 @@
 
         public async Task<EditCinemaFormModel?> GetCinemaForEditByIdAsync(Guid id)
         {
-            EditCinemaFormModel? cinemaModel = await this.cinemaRepository
+            return await this.cinemaRepository
                 .GetAllAttached()
+                .Where(c => c.Id == id)
                 .To<EditCinemaFormModel>()
-                .FirstOrDefaultAsync(c => c.Id.ToLower() == id.ToString().ToLower());
-
-            return cinemaModel;
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> EditCinemaAsync(EditCinemaFormModel model)
         {
-            Cinema cinemaEntity = AutoMapperConfig.MapperInstance
-                .Map<EditCinemaFormModel, Cinema>(model);
+            Cinema? cinemaEntity = await this.cinemaRepository.GetByIdAsync(Guid.Parse(model.Id));
 
-            bool result = await this.cinemaRepository.UpdateAsync(cinemaEntity);
-            return result;
+            if (cinemaEntity == null)
+            {
+                return false;
+            }
+
+            AutoMapperConfig.MapperInstance.Map(model, cinemaEntity);
+
+            return await this.cinemaRepository.UpdateAsync(cinemaEntity);
         }
 
         public async Task<CinemaProgramViewModel?> GetCinemaProgramByIdAsync(Guid id)
@@ -120,5 +124,28 @@
             return viewModel;
         }
 
+        public async Task<bool> ToggleDeleteCinemaAsync(Guid id)
+        {
+            Cinema? cinema = await this.cinemaRepository.GetByIdAsync(id);
+
+            if (cinema == null)
+            {
+                return false;
+            }
+
+            cinema.IsDeleted = !cinema.IsDeleted;
+            await this.cinemaRepository.UpdateAsync(cinema);
+
+            return true;
+        }
+
+        public async Task<IEnumerable<CinemaIndexViewModel>> GetAllCinemasForAdminAsync()
+        {
+            return await this.cinemaRepository
+                .GetAllAttached()
+                .OrderBy(c => c.Location)
+                .To<CinemaIndexViewModel>()
+                .ToArrayAsync();
+        }
     }
 }

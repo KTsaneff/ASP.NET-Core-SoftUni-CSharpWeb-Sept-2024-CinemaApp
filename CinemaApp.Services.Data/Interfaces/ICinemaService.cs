@@ -15,5 +15,9 @@
         Task<bool> EditCinemaAsync(EditCinemaFormModel model);
 
         Task<CinemaProgramViewModel?> GetCinemaProgramByIdAsync(Guid id);
+
+        Task<bool> ToggleDeleteCinemaAsync(Guid id);
+
+        Task<IEnumerable<CinemaIndexViewModel>> GetAllCinemasForAdminAsync();
     }
 }

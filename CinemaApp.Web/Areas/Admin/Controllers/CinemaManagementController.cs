@@ -21,7 +21,7 @@
         public async Task<IActionResult> Manage()
         {
             IEnumerable<CinemaIndexViewModel> cinemas =
-                await this.cinemaService.IndexGetAllOrderedByLocationAsync();
+                await this.cinemaService.GetAllCinemasForAdminAsync();
 
             return this.View(cinemas);
         }
@@ -49,57 +49,49 @@
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            EditCinemaFormModel? formModel = await this.cinemaService.GetCinemaForEditByIdAsync(id);
-            if (formModel == null)
+            var cinema = await this.cinemaService.GetCinemaForEditByIdAsync(id);
+
+            if (cinema == null)
             {
-                return this.NotFound();
+                TempData["ErrorMessage"] = "Cinema not found.";
+                return this.RedirectToAction(nameof(Manage));
             }
 
-            return this.View(formModel);
+            return this.View(cinema);
         }
 
-        // POST: Update Cinema Details
         [HttpPost]
-        public async Task<IActionResult> Edit(EditCinemaFormModel formModel)
+        public async Task<IActionResult> Edit(EditCinemaFormModel model)
         {
             if (!ModelState.IsValid)
             {
-                return this.View(formModel);
+                return this.View(model);
             }
 
-            bool isUpdated = await this.cinemaService.EditCinemaAsync(formModel);
+            bool isUpdated = await this.cinemaService.EditCinemaAsync(model);
             if (!isUpdated)
             {
-                ModelState.AddModelError(string.Empty, "Unexpected error occurred while updating the cinema.");
-                return this.View(formModel);
+                TempData["ErrorMessage"] = "Failed to update the cinema.";
+                return this.View(model);
             }
 
+            TempData["SuccessMessage"] = $"Cinema '{model.Name}' updated successfully!";
             return this.RedirectToAction(nameof(Manage));
         }
 
-        // GET: Confirm Deletion of a Cinema
-        [HttpGet]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpPost]
+        public async Task<IActionResult> ToggleDelete(Guid id)
         {
-            //CinemaIndexViewModel? cinema = await this.cinemaService.GetCinemaByIdAsync(id);
-            //if (cinema == null)
-            //{
-            //    return this.NotFound();
-            //}
+            bool result = await this.cinemaService.ToggleDeleteCinemaAsync(id);
 
-            return this.View(/*cinema*/);
-        }
-
-        // POST: Delete a Cinema
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            //bool isDeleted = await this.cinemaService.DeleteCinemaAsync(id);
-            //if (!isDeleted)
-            //{
-            //    ModelState.AddModelError(string.Empty, "Failed to delete the cinema.");
-            //    return this.View();
-            //}
+            if (!result)
+            {
+                TempData["ErrorMessage"] = "Failed to delete cinema.";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "Cinema deleted successfully!";
+            }
 
             return this.RedirectToAction(nameof(Manage));
         }
