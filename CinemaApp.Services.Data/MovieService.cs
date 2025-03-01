@@ -39,7 +39,7 @@
         public async Task<bool> AddMovieAsync(AddMovieInputModel inputModel)
         {
             bool isReleaseDateValid = DateTime
-                .TryParseExact(inputModel.ReleaseDate, ReleaseDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                .TryParseExact(inputModel.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None,
                     out DateTime releaseDate);
             if (!isReleaseDateValid)
             {
@@ -164,6 +164,44 @@
                 .GetAllAttached()
                 .To<MovieIndexViewModel>()
                 .ToArrayAsync();
+        }
+
+        public async Task<EditMovieFormModel?> GetMovieForEditByIdAsync(Guid id)
+        {
+            return await this.movieRepository
+                .GetAllAttached()
+                .Where(m => m.Id == id)
+                .To<EditMovieFormModel>()
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> EditMovieAsync(EditMovieFormModel model)
+        {
+            Movie? movie = await this.movieRepository
+                .GetByIdAsync(model.Id);
+
+            if (movie == null)
+            {
+                return false;
+            }
+
+            AutoMapperConfig.MapperInstance.Map(model, movie);
+            await this.movieRepository.UpdateAsync(movie);
+
+            return true;
+        }
+
+        public async Task<bool> ToggleDeleteMovieAsync(Guid id)
+        {
+            Movie? movie = await this.movieRepository
+                .GetByIdAsync(id);
+            if (movie == null)
+            {
+                return false;
+            }
+            movie.IsDeleted = !movie.IsDeleted;
+            await this.movieRepository.UpdateAsync(movie);
+            return true;
         }
     }
 }

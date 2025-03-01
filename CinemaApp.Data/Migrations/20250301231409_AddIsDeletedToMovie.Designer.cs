@@ -4,6 +4,7 @@ using CinemaApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaApp.Data.Migrations
 {
     [DbContext(typeof(CinemaDbContext))]
-    partial class CinemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250301231409_AddIsDeletedToMovie")]
+    partial class AddIsDeletedToMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,21 +132,21 @@ namespace CinemaApp.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1e115b7a-a0f7-4a3f-b042-3e8712668a80"),
+                            Id = new Guid("b85879d8-22a8-41c8-a7b7-912e89990256"),
                             IsDeleted = false,
                             Location = "Sofia",
                             Name = "Cinema city"
                         },
                         new
                         {
-                            Id = new Guid("af081410-f61c-4cd0-a345-7bf2d43463f4"),
+                            Id = new Guid("c1f7ba8c-9c14-4ea2-841d-62268cb3a663"),
                             IsDeleted = false,
                             Location = "Plovdiv",
                             Name = "Cinema city"
                         },
                         new
                         {
-                            Id = new Guid("46060314-fb71-4625-8aad-cb8a7fceea23"),
+                            Id = new Guid("00d28ab6-8b74-49cd-841c-b7d444144f5e"),
                             IsDeleted = false,
                             Location = "Varna",
                             Name = "Cinemax"
@@ -243,7 +246,7 @@ namespace CinemaApp.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7f5c5851-05da-4115-bef6-9559f6cddfe4"),
+                            Id = new Guid("9d58e2a4-d9cb-4ac0-9a90-d3548bffd385"),
                             Description = "Harry Potter and the Goblet of Fire is a 2005 fantasy film directed by Mike Newell from a screenplay by Steve Kloves. It is based on the 2000 novel Harry Potter and the Goblet of Fire by J. K. Rowling.",
                             Director = "Mike Newel",
                             Duration = 157,
@@ -254,7 +257,7 @@ namespace CinemaApp.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5eed4ed5-6a3b-44cb-9379-6484c987044b"),
+                            Id = new Guid("bb54744c-f04f-4377-9120-a497ce10dcaf"),
                             Description = "The Lord of the Rings: The Fellowship of the Ring is a 2001 epic high fantasy adventure film directed by Peter Jackson from a screenplay by Fran Walsh, Philippa Boyens, and Jackson, based on 1954's The Fellowship of the Ring, the first volume of the novel The Lord of the Rings by J. R. R. Tolkien. ",
                             Director = "Peter Jackson",
                             Duration = 178,

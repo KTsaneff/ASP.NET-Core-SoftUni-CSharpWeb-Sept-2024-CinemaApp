@@ -31,4 +31,10 @@
     <ProjectReference Include="..\CinemaApp.Web.Infrastructure\CinemaApp.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\CinemaApp.Web.ViewModels\CinemaApp.Web.ViewModels.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Manager\Controllers\" />
+    <Folder Include="Areas\Manager\ViewModels\" />
+    <Folder Include="Areas\Manager\Views\" />
+  </ItemGroup>
 </Project>

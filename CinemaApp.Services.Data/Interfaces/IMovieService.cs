@@ -15,5 +15,11 @@
         Task<bool> AddMovieToCinemasAsync(Guid movieId, AddMovieToCinemaInputModel model);
 
         Task<IEnumerable<MovieIndexViewModel>> GetAllMoviesForAdminAsync();
+
+        Task<EditMovieFormModel?> GetMovieForEditByIdAsync(Guid id);
+
+        Task<bool> EditMovieAsync(EditMovieFormModel model);
+
+        Task<bool> ToggleDeleteMovieAsync(Guid id);
     }
 }

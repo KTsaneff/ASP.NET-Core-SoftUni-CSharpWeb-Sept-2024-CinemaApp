@@ -18,6 +18,8 @@
 
         public string? ImageUrl { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
         public virtual ICollection<CinemaMovie> MovieCinemas { get; set; } 
             = new HashSet<CinemaMovie>();
 

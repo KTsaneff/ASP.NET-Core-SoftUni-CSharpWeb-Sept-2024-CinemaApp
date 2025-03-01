@@ -41,23 +41,32 @@
                 <tbody>
                     @foreach (var movie in Model)
                     {
-                        <tr class="align-middle text-center">
-                            <td class="fw-bold">@movie.Title</td>
+                        <tr class="align-middle text-center @(movie.IsDeleted ? "table-danger" : "")">
+                            <td class="fw-bold">
+                                @movie.Title
+                                @if (movie.IsDeleted)
+                                {
+                                    <span class="badge bg-danger ms-2">Deleted</span>
+                                }
+                            </td>
                             <td>@movie.Genre</td>
                             <td>@movie.Duration min</td>
                             <td>@movie.Director</td>
-                            <td>@movie.ReleaseDate</td>
+                            <td>@DateTime.Parse(movie.ReleaseDate).ToString("yyyy-MM-dd")</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-primary btn-sm fw-bold">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
 
-                                    <form asp-action="Delete" asp-route-id="@movie.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this movie?');">
-                                        <button type="submit" class="btn btn-danger btn-sm fw-bold">
-                                            <i class="bi bi-trash"></i> Delete
+                                    <form id="toggleDeleteForm-@movie.Id" asp-action="ToggleDelete" asp-route-id="@movie.Id" method="post" class="d-inline">
+                                        <button type="button" class="btn @(movie.IsDeleted ? "btn-warning" : "btn-danger") btn-sm fw-bold"
+                                                onclick="confirmToggleDeleteMovie('@movie.Id', '@(movie.IsDeleted ? "restore" : "delete")')">
+                                            <i class="bi @(movie.IsDeleted ? "bi-arrow-clockwise" : "bi-trash")"></i>
+                                            @(movie.IsDeleted ? "Restore" : "Delete")
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>

@@ -22,6 +22,8 @@
 
         public string? ImageUrl { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public void CreateMappings(AutoMapper.IProfileExpression configuration)
         {
             configuration.CreateMap<Movie, MovieIndexViewModel>()
