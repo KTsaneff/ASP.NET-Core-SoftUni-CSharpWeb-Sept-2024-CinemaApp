@@ -12,6 +12,7 @@
     using Web.ViewModels.Movie;
 
     using static Common.EntityValidationConstants.Movie;
+    using CinemaApp.Web.ViewModels.Program;
 
     public class MovieService : BaseService, IMovieService
     {
@@ -99,65 +100,6 @@
             return viewModel;
         }
 
-        public async Task<bool> AddMovieToCinemasAsync(Guid movieId, AddMovieToCinemaInputModel model)
-        {
-            Movie? movie = await this.movieRepository
-                .GetByIdAsync(movieId);
-            if (movie == null)
-            {
-                return false;
-            }
-
-            ICollection<CinemaMovie> entitiesToAdd = new List<CinemaMovie>();
-            foreach (CinemaCheckBoxItemInputModel cinemaInputModel in model.Cinemas)
-            {
-                Guid cinemaGuid = Guid.Empty;
-                bool isCinemaGuidValid = this.IsGuidValid(cinemaInputModel.Id, ref cinemaGuid);
-                if (!isCinemaGuidValid)
-                {
-                    return false;
-                }
-
-                Cinema? cinema = await this.cinemaRepository
-                    .GetByIdAsync(cinemaGuid);
-                if (cinema == null)
-                {
-                    return false;
-                }
-
-                CinemaMovie? cinemaMovie = await this.cinemaMovieRepository
-                    .FirstOrDefaultAsync(cm => cm.MovieId == movieId &&
-                                                     cm.CinemaId == cinemaGuid);
-                if (cinemaInputModel.IsSelected)
-                {
-                    if (cinemaMovie == null)
-                    {
-                        entitiesToAdd.Add(new CinemaMovie()
-                        {
-                            Cinema = cinema,
-                            Movie = movie,
-                            AvailableTickets = 0
-                        });
-                    }
-                    else
-                    {
-                        cinemaMovie.IsDeleted = false;
-                    }
-                }
-                else
-                {
-                    if (cinemaMovie != null)
-                    {
-                        cinemaMovie.IsDeleted = true;
-                    }
-                }
-            }
-
-            await this.cinemaMovieRepository.AddRangeAsync(entitiesToAdd.ToArray());
-
-            return true;
-        }
-
         public async Task<IEnumerable<MovieIndexViewModel>> GetAllMoviesForAdminAsync()
         {
             return await this.movieRepository
@@ -202,6 +144,27 @@
             movie.IsDeleted = !movie.IsDeleted;
             await this.movieRepository.UpdateAsync(movie);
             return true;
+        }
+        public async Task<IEnumerable<ProgramSetupViewModel>> GetMoviesForProgramAsync(Guid cinemaId)
+        {
+            var moviesWithStatus = await this.movieRepository
+                .GetAllAttached()
+                .Where(m => !m.IsDeleted)
+                .Select(m => new ProgramSetupViewModel
+                {
+                    MovieId = m.Id,
+                    Title = m.Title,
+                    Duration = m.Duration,
+                    PosterUrl = m.ImageUrl,
+                    IsIncluded = this.cinemaMovieRepository
+                        .GetAllAttached()
+                        .Any(cm => cm.CinemaId == cinemaId && cm.MovieId == m.Id && !cm.IsDeleted)
+                })
+                .OrderByDescending(m => m.IsIncluded)
+                .ThenBy(m => m.Title)
+                .ToListAsync();
+
+            return moviesWithStatus;
         }
     }
 }

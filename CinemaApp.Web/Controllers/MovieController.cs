@@ -134,37 +134,5 @@
 
             return this.View(viewModel);
         }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> AddToProgram(AddMovieToCinemaInputModel model)
-        {
-            bool isManager = await this.IsUserManagerAsync();
-            if (!isManager)
-            {
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(model);
-            }
-
-            Guid movieGuid = Guid.Empty;
-            bool isGuidValid = this.IsGuidValid(model.Id, ref movieGuid);
-            if (!isGuidValid)
-            {
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            bool result = await this.movieService
-                .AddMovieToCinemasAsync(movieGuid, model);
-            if (result == false)
-            {
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            return this.RedirectToAction(nameof(Index), "Cinema");
-        }
     }
 }

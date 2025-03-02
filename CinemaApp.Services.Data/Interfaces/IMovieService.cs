@@ -1,5 +1,6 @@
 ﻿namespace CinemaApp.Services.Data.Interfaces
 {
+    using CinemaApp.Web.ViewModels.Program;
     using Web.ViewModels.Movie;
 
     public interface IMovieService
@@ -12,8 +13,6 @@
 
         Task<AddMovieToCinemaInputModel?> GetAddMovieToCinemaInputModelByIdAsync(Guid id);
 
-        Task<bool> AddMovieToCinemasAsync(Guid movieId, AddMovieToCinemaInputModel model);
-
         Task<IEnumerable<MovieIndexViewModel>> GetAllMoviesForAdminAsync();
 
         Task<EditMovieFormModel?> GetMovieForEditByIdAsync(Guid id);
@@ -21,5 +20,7 @@
         Task<bool> EditMovieAsync(EditMovieFormModel model);
 
         Task<bool> ToggleDeleteMovieAsync(Guid id);
+
+        Task<IEnumerable<ProgramSetupViewModel>> GetMoviesForProgramAsync(Guid cinemaId);
     }
 }
