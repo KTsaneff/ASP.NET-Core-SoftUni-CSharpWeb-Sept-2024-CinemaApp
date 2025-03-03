@@ -6,6 +6,6 @@ namespace CinemaApp.Web.ViewModels.Cinema
     {
         public Guid CinemaId { get; set; }
 
-        public IEnumerable<ProgramSetupViewModel> Movies { get; set; } = null!;
+        public IEnumerable<ProgramSetupViewModel> Movies { get; set; } = new List<ProgramSetupViewModel>();
     }
 }

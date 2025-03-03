@@ -24,36 +24,45 @@ namespace CinemaApp.Web.Areas.Manager.Controllers
         {
             var movies = await _movieService.GetMoviesForProgramAsync(cinemaId);
 
-            if (!movies.Any())
+            var model = new ProgramSetupUpdateViewModel
             {
-                return RedirectToAction("Index", "Movies");
-            }
+                CinemaId = cinemaId,
+                Movies = movies.ToList()
+            };
 
-            ViewBag.CinemaId = cinemaId;
-            return View(movies);
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveProgramChanges(ProgramSetupUpdateViewModel model)
         {
+            Console.WriteLine("------ SaveProgramChanges Called ------");
+            Console.WriteLine($"Cinema ID: {model.CinemaId}");
+
             if (model == null || model.Movies == null)
             {
-                return RedirectToAction("Index", "ProgramSetup");
+                Console.WriteLine("❌ Model is null or Movies list is empty!");
+                return BadRequest("Invalid data.");
             }
 
             foreach (var movie in model.Movies)
             {
+                Console.WriteLine($"📽 Movie ID: {movie.MovieId}, IsIncluded: {movie.IsIncluded}");
+
                 if (movie.IsIncluded)
                 {
+                    Console.WriteLine($"✅ Adding movie {movie.MovieId} to Cinema {model.CinemaId}");
                     await _movieService.AddMovieToCinemaIfNotExistsAsync(model.CinemaId, movie.MovieId);
                 }
                 else
                 {
+                    Console.WriteLine($"🗑 Removing movie {movie.MovieId} from Cinema {model.CinemaId}");
                     await _movieService.RemoveMovieFromCinemaIfExistsAsync(model.CinemaId, movie.MovieId);
                 }
             }
 
-            return RedirectToAction("Index", "ProgramSetup", new { cinemaId = model.CinemaId });
+            return RedirectToAction("Index", new { cinemaId = model.CinemaId });
         }
+
     }
 }

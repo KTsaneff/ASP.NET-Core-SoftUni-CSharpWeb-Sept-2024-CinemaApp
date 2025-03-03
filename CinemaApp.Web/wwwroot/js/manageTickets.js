@@ -1,8 +1,11 @@
 ﻿function openManageTicketsModal(cinemaId) {
-    fetch(`/api/TicketApi/GetMoviesByCinema/${cinemaId}`)
+    fetch(`/api/TicketApi/GetMoviesByCinema/${cinemaId}`, {
+        method: 'GET',
+        credentials: 'include'
+    })
         .then(response => response.json())
         .then(movies => {
-            renderMoviesInModal(movies);
+            renderMoviesInModal(cinemaId, movies);
             $('#manageTicketsModal').modal('show');
         })
         .catch(error => {
@@ -11,7 +14,7 @@
         });
 }
 
-function renderMoviesInModal(movies) {
+function renderMoviesInModal(cinemaId, movies) {
     let modalHtml = `
         <div id="manageTicketsModal" class="modal fade" tabindex="-1" aria-labelledby="manageTicketsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -23,11 +26,10 @@ function renderMoviesInModal(movies) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <table class="table">
+                        <table class="table table-dark">
                             <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Genre</th>
                                     <th>Duration</th>
                                     <th>Available Tickets</th>
                                     <th>Action</th>
@@ -39,10 +41,9 @@ function renderMoviesInModal(movies) {
         modalHtml += `
             <tr>
                 <td>${movie.title}</td>
-                <td>${movie.genre}</td>
-                <td>${movie.duration}</td>
+                <td>${movie.duration} min</td>
                 <td><input type="number" id="availableTickets-${movie.id}" value="${movie.availableTickets}" min="0" class="form-control" /></td>
-                <td><button class="btn btn-primary" onclick="updateAvailableTickets('${movie.id}', '${movie.cinemaId}')">Update</button></td>
+                <td><button class="btn btn-primary" onclick="updateAvailableTickets('${movie.id}', '${cinemaId}')">Update</button></td>
             </tr>`;
     });
 
@@ -65,6 +66,7 @@ function updateAvailableTickets(movieId, cinemaId) {
 
     fetch('/api/TicketApi/UpdateAvailableTickets', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             CinemaId: cinemaId,

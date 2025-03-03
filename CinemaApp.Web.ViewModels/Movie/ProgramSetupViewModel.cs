@@ -6,6 +6,7 @@
         public string Title { get; set; } = null!;
         public int Duration { get; set; }
         public string? PosterUrl { get; set; } = null!;
+
         public bool IsIncluded { get; set; }
     }
 }

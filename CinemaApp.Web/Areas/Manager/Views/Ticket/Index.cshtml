@@ -1,0 +1,32 @@
+﻿@model List<CinemaApp.Web.ViewModels.Cinema.CinemaIndexViewModel>
+
+@{
+    ViewData["Title"] = "Manage Ticket Availability";
+}
+
+<div class="container mt-4">
+    <h1 class="display-6 text-primary fw-bold">Manage Ticket Availability</h1>
+
+    <div class="row">
+        @foreach (var cinema in Model)
+        {
+            <div class="col-md-4">
+                <div class="card text-white bg-dark mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@cinema.Name</h5>
+                        <p class="card-text">@cinema.Location</p>
+                        <button class="btn btn-warning" onclick="openManageTicketsModal('@cinema.Id')">
+                            <i class="bi bi-ticket"></i> Manage Tickets
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="manageTicketsModalContainer"></div>
+
+@section Scripts {
+    <script src="~/js/manageTickets.js"></script>
+}
