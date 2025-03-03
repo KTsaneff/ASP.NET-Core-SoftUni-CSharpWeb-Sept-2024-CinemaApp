@@ -41,6 +41,8 @@
                                 <input type="hidden" name="Movies[@i].Duration" value="@Model[i].Duration" />
 
                                 <div class="form-check form-switch d-inline-block">
+                                    <input type="hidden" name="Movies[@i].IsIncluded" value="false" />
+
                                     <input class="form-check-input toggle-switch"
                                            type="checkbox"
                                            name="Movies[@i].IsIncluded"
@@ -58,6 +60,7 @@
                                     </label>
                                 </div>
                             </td>
+
                         </tr>
                     }
                 </tbody>
@@ -72,15 +75,6 @@
     </form>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var submitButton = document.getElementById("submitButton");
-        var toggles = document.querySelectorAll(".toggle-switch");
-
-        toggles.forEach(toggle => {
-            toggle.addEventListener("change", function () {
-                submitButton.disabled = false;
-            });
-        });
-    });
-</script>
+@section Scripts {
+    <script src="~/js/programSetup.js"></script>
+}
