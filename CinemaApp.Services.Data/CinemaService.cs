@@ -22,12 +22,21 @@
         {
             IEnumerable<CinemaIndexViewModel> cinemas = await this.cinemaRepository
                 .GetAllAttached()
+                .Where(c => !c.IsDeleted)
                 .OrderBy(c => c.Location)
-                .To<CinemaIndexViewModel>()
+                .ThenBy(c => c.Name)
+                .Select(c => new CinemaIndexViewModel
+                {
+                    Id = c.Id.ToString(),
+                    Name = c.Name,
+                    Location = c.Location,
+                    HasMovies = c.CinemaMovies.Any(cm => !cm.IsDeleted)
+                })
                 .ToArrayAsync();
 
             return cinemas;
         }
+
 
         public async Task AddCinemaAsync(AddCinemaFormModel model)
         {
@@ -91,21 +100,15 @@
 
         public async Task<CinemaProgramViewModel?> GetCinemaProgramByIdAsync(Guid id)
         {
-            Cinema? cinema = await this.cinemaRepository
+            var cinema = await this.cinemaRepository
                 .GetAllAttached()
-                .Include(c => c.CinemaMovies)
-                .ThenInclude(cm => cm.Movie)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            CinemaProgramViewModel? viewModel = null;
-            if (cinema != null)
-            {
-                viewModel = new CinemaProgramViewModel()
+                .Where(c => c.Id == id)
+                .Select(c => new
                 {
-                    Id = cinema.Id.ToString(),
-                    Name = cinema.Name,
-                    Location = cinema.Location,
-                    Movies = cinema.CinemaMovies
+                    c.Id,
+                    c.Name,
+                    c.Location,
+                    Movies = c.CinemaMovies
                         .Where(cm => !cm.IsDeleted)
                         .Select(cm => new MovieInCinemaViewModel
                         {
@@ -116,13 +119,24 @@
                             Duration = $"{cm.Movie.Duration} min",
                             Description = cm.Movie.Description,
                             AvailableTickets = cm.AvailableTickets
-                        })
-                        .ToList()
-                };
+                        }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (cinema == null)
+            {
+                return null;
             }
 
-            return viewModel;
+            return new CinemaProgramViewModel
+            {
+                Id = cinema.Id.ToString(),
+                Name = cinema.Name,
+                Location = cinema.Location,
+                Movies = cinema.Movies
+            };
         }
+
 
         public async Task<bool> ToggleDeleteCinemaAsync(Guid id)
         {

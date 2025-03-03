@@ -12,5 +12,7 @@
         public string Location { get; set; } = null!;
 
         public bool IsDeleted { get; set; }
+
+        public bool HasMovies { get; set; }
     }
 }

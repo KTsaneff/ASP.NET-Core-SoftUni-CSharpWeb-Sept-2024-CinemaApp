@@ -12,7 +12,6 @@
     using Web.ViewModels.Movie;
 
     using static Common.EntityValidationConstants.Movie;
-    using CinemaApp.Web.ViewModels.Program;
 
     public class MovieService : BaseService, IMovieService
     {
@@ -20,7 +19,7 @@
         private readonly IRepository<Cinema, Guid> cinemaRepository;
         private readonly IRepository<CinemaMovie, object> cinemaMovieRepository;
 
-        public MovieService(IRepository<Movie, Guid> movieRepository, 
+        public MovieService(IRepository<Movie, Guid> movieRepository,
             IRepository<Cinema, Guid> cinemaRepository,
             IRepository<CinemaMovie, object> cinemaMovieRepository)
         {
@@ -165,6 +164,47 @@
                 .ToListAsync();
 
             return moviesWithStatus;
+        }
+
+        public async Task<bool> AddMovieToCinemaIfNotExistsAsync(Guid cinemaId, Guid movieId)
+        {
+            var cinemaMovie = await this.cinemaMovieRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(cm => cm.CinemaId == cinemaId && cm.MovieId == movieId);
+
+            if (cinemaMovie == null)
+            {
+                cinemaMovie = new CinemaMovie()
+                {
+                    CinemaId = cinemaId,
+                    MovieId = movieId,
+                    AvailableTickets = 0,
+                    IsDeleted = false
+                };
+
+                await this.cinemaMovieRepository.AddAsync(cinemaMovie);
+            }
+            else
+            {
+                cinemaMovie.IsDeleted = false;
+                await this.cinemaMovieRepository.UpdateAsync(cinemaMovie);
+            }
+            return true;
+        }
+
+        public async Task<bool> RemoveMovieFromCinemaIfExistsAsync(Guid cinemaId, Guid movieId)
+        {
+            var cinemaMovie = await this.cinemaMovieRepository
+                .GetAllAttached()
+                .FirstOrDefaultAsync(cm => cm.CinemaId == cinemaId && cm.MovieId == movieId);
+
+            if (cinemaMovie != null && !cinemaMovie.IsDeleted)
+            {
+                cinemaMovie.IsDeleted = true;
+                await this.cinemaMovieRepository.UpdateAsync(cinemaMovie);
+            }
+
+            return true;
         }
     }
 }
