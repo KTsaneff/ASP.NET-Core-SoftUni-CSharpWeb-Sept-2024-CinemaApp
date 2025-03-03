@@ -1,11 +1,16 @@
-﻿function openManageTicketsModal(cinemaId) {
-    fetch(`/api/TicketApi/GetMoviesByCinema/${cinemaId}`, {
+﻿function openManageTicketsModal(cinemaId, cinemaName, cinemaLocation) {
+    fetch(`/Manager/api/TicketApi/GetMoviesByCinema/${cinemaId}`, {
         method: 'GET',
         credentials: 'include'
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to load movies.");
+            }
+            return response.json();
+        })
         .then(movies => {
-            renderMoviesInModal(cinemaId, movies);
+            renderMoviesInModal(movies, cinemaName, cinemaLocation);
             $('#manageTicketsModal').modal('show');
         })
         .catch(error => {
@@ -14,44 +19,57 @@
         });
 }
 
-function renderMoviesInModal(cinemaId, movies) {
+function renderMoviesInModal(movies, cinemaName, cinemaLocation) {
     let modalHtml = `
         <div id="manageTicketsModal" class="modal fade" tabindex="-1" aria-labelledby="manageTicketsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Manage Tickets</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-film"></i> ${cinemaName} - <span class="text-muted">${cinemaLocation}</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Duration</th>
-                                    <th>Available Tickets</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                    <div class="modal-body">`;
 
-    movies.forEach(movie => {
+    if (movies.length === 0) {
+        modalHtml += `<p class="text-center text-warning">No movies are included in the cinema program.</p>`;
+    } else {
         modalHtml += `
-            <tr>
-                <td>${movie.title}</td>
-                <td>${movie.duration} min</td>
-                <td><input type="number" id="availableTickets-${movie.id}" value="${movie.availableTickets}" min="0" class="form-control" /></td>
-                <td><button class="btn btn-primary" onclick="updateAvailableTickets('${movie.id}', '${cinemaId}')">Update</button></td>
-            </tr>`;
-    });
+            <div class="table-responsive">
+                <table class="table table-dark table-striped text-center">
+                    <thead class="table-warning text-dark">
+                        <tr>
+                            <th>Movie Title</th>
+                            <th>Available Tickets</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moviesListContainer">`;
+
+        movies.forEach(movie => {
+            modalHtml += `
+                <tr>
+                    <td class="fw-bold">${movie.title}</td>
+                    <td>
+                        <input type="number" id="availableTickets-${movie.id}" 
+                               value="${movie.availableTickets}" min="0" 
+                               class="form-control text-center bg-secondary text-white" />
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="updateAvailableTickets('${movie.id}', '${movie.cinemaId}')">
+                            <i class="bi bi-save"></i> Update
+                        </button>
+                    </td>
+                </tr>`;
+        });
+
+        modalHtml += `</tbody></table></div>`;
+    }
 
     modalHtml += `
-                            </tbody>
-                        </table>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer border-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -59,6 +77,7 @@ function renderMoviesInModal(cinemaId, movies) {
         </div>`;
 
     document.getElementById("manageTicketsModalContainer").innerHTML = modalHtml;
+    $('#manageTicketsModal').modal('show');
 }
 
 function updateAvailableTickets(movieId, cinemaId) {
@@ -66,7 +85,6 @@ function updateAvailableTickets(movieId, cinemaId) {
 
     fetch('/api/TicketApi/UpdateAvailableTickets', {
         method: 'POST',
-        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             CinemaId: cinemaId,

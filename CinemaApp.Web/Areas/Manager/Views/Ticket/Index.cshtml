@@ -1,4 +1,5 @@
-﻿@model List<CinemaApp.Web.ViewModels.Cinema.CinemaIndexViewModel>
+﻿@using CinemaApp.Web.ViewModels.Cinema
+@model IEnumerable<CinemaIndexViewModel>
 
 @{
     ViewData["Title"] = "Manage Ticket Availability";
@@ -11,13 +12,21 @@
         @foreach (var cinema in Model)
         {
             <div class="col-md-4">
-                <div class="card text-white bg-dark mb-3">
+                <div class="card text-white @(cinema.HasMovies ? "bg-dark" : "bg-secondary") mb-3">
                     <div class="card-body text-center">
                         <h5 class="card-title">@cinema.Name</h5>
                         <p class="card-text">@cinema.Location</p>
-                        <button class="btn btn-warning" onclick="openManageTicketsModal('@cinema.Id')">
-                            <i class="bi bi-ticket"></i> Manage Tickets
-                        </button>
+
+                        @if (cinema.HasMovies)
+                        {
+                            <button class="btn btn-warning" onclick="openManageTicketsModal('@cinema.Id', '@cinema.Name', '@cinema.Location')">
+                                <i class="bi bi-ticket"></i> Manage Tickets
+                            </button>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No movies in the program</p>
+                        }
                     </div>
                 </div>
             </div>

@@ -1,61 +1,35 @@
 ﻿using CinemaApp.Services.Data.Interfaces;
-using CinemaApp.Web.ViewModels.Tickets;
+using CinemaApp.Web.ViewModels.Cinema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinemaApp.Web.Areas.Manager.Controllers
 {
     [Area("Manager")]
-    [Authorize(Roles = "Manager")]
+    [Authorize]
     public class TicketController : Controller
     {
-        private readonly ITicketService _ticketService;
-        private readonly ICinemaService _cinemaService;
-        private readonly IManagerService _managerService;
+        private readonly ITicketService ticketService;
+        private readonly ICinemaService cinemaService;
+        private readonly IMovieService movieService;
 
         public TicketController(
             ITicketService ticketService,
             ICinemaService cinemaService,
-            IManagerService managerService)
+            IMovieService movieService)
         {
-            _ticketService = ticketService;
-            _cinemaService = cinemaService;
-            _managerService = managerService;
+            this.ticketService = ticketService;
+            this.cinemaService = cinemaService;
+            this.movieService = movieService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cinemas = await _cinemaService.IndexGetAllOrderedByLocationAsync();
-            return View(cinemas.ToList());
-        }
+            IEnumerable<CinemaIndexViewModel> cinemas = await this.cinemaService
+                .IndexGetAllOrderedByLocationAsync();
 
-        [HttpGet("GetMoviesByCinema/{cinemaId}")]
-        public async Task<IActionResult> GetMoviesByCinema(Guid cinemaId)
-        {
-            var cinemaProgram = await _cinemaService.GetCinemaProgramByIdAsync(cinemaId);
-            if (cinemaProgram == null)
-            {
-                return NotFound("Cinema not found.");
-            }
-
-            return Ok(cinemaProgram.Movies);
-        }
-
-        [HttpPost("UpdateAvailableTickets")]
-        public async Task<IActionResult> UpdateAvailableTickets([FromBody] SetAvailableTicketsViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _ticketService.SetAvailableTicketsAsync(model);
-            if (!result)
-            {
-                return BadRequest("Failed to update available tickets. Please try again.");
-            }
-
-            return Ok(new { success = true, message = "Ticket availability updated successfully." });
+            return View(cinemas);
         }
     }
 }
