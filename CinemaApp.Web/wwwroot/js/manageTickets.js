@@ -80,10 +80,23 @@ function renderMoviesInModal(movies, cinemaName, cinemaLocation) {
     $('#manageTicketsModal').modal('show');
 }
 
+function showToast(message, isSuccess = true) {
+    Swal.fire({
+        title: isSuccess ? "Success" : "Error",
+        text: message,
+        icon: isSuccess ? "success" : "error",
+        confirmButtonColor: isSuccess ? "#28a745" : "#dc3545",
+        timer: 3000,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end"
+    });
+}
+
 function updateAvailableTickets(movieId, cinemaId) {
     const availableTickets = document.getElementById(`availableTickets-${movieId}`).value;
 
-    fetch('/api/TicketApi/UpdateAvailableTickets', {
+    fetch('/Manager/api/TicketApi/UpdateAvailableTickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -93,11 +106,19 @@ function updateAvailableTickets(movieId, cinemaId) {
         })
     })
         .then(response => {
-            if (!response.ok) throw new Error("Failed to update tickets.");
-            alert("Ticket availability updated successfully.");
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text || "Failed to update tickets.");
+                });
+            }
+
+            return response.json().catch(() => null);
+        })
+        .then(data => {
+            showToast("Ticket availability updated successfully!", true);
         })
         .catch(error => {
             console.error("Error:", error);
-            alert("An error occurred while updating tickets.");
+            showToast("An error occurred while updating tickets.", false);
         });
 }

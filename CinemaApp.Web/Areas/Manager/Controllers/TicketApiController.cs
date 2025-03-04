@@ -8,10 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaApp.Web.Areas.Manager.Controllers
 {
+    [Authorize(Roles = "Manager")]
     [ApiController]
     [Route("Manager/api/[controller]")]
-    [Authorize]
-    [Area("Manager")]
     public class TicketApiController : ControllerBase
     {
         private readonly ITicketService ticketService;
