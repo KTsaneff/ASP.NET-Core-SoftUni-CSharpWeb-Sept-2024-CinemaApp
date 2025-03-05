@@ -12,6 +12,7 @@
             return response.json();
         })
         .then(movies => {
+            console.log("Movies received from API:", movies);
             renderShowtimeSetupModal(movies, cinemaName, cinemaLocation);
             $('#showtimeSetupModal').modal('show');
         })
@@ -62,27 +63,33 @@ function renderShowtimeSetupModal(movies, cinemaName, cinemaLocation) {
                     <tbody id="moviesListContainer">`;
 
         movies.forEach(movie => {
+            let tempMovieId = movie.movieId;
+            let tempCinemaId = movie.cinemaId;
+            let tempMovieTitle = movie.title;
+            let tempMovieShowtimes = movie.showtimes;
+
             modalHtml += `
-                <tr>
-                    <td class="fw-bold">${movie.title}</td>
-                    <td>
-                        <div class="d-flex justify-content-center gap-2">
-                            ${["12 PM", "3 PM", "6 PM", "8 PM", "10 PM"].map((time, index) => `
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" 
-                                           id="showtime-${movie.id}-${index}" 
-                                           ${movie.showtimes[index] ? "checked" : ""}>
-                                    <label class="form-check-label">${time}</label>
-                                </div>`).join('')}
-                        </div>
-                    </td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="updateShowtimes('${movie.id}', '${movie.cinemaId}')">
-                            <i class="bi bi-save"></i> Save
-                        </button>
-                    </td>
-                </tr>`;
+        <tr>
+            <td class="fw-bold">${tempMovieTitle}</td>
+            <td>
+                <div class="d-flex justify-content-center gap-2">
+                    ${["12 PM", "3 PM", "6 PM", "8 PM", "10 PM"].map((time, index) => ` 
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   id="showtime-${tempMovieId}-${index}" 
+                                   ${tempMovieShowtimes[index] ? "checked" : ""}>
+                            <label class="form-check-label">${time}</label>
+                        </div>`).join('')}
+                </div>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="updateShowtimes('${tempMovieId}', '${tempCinemaId}')">
+                    <i class="bi bi-save"></i> Save
+                </button>
+            </td>
+        </tr>`;
         });
+
 
         modalHtml += `</tbody></table></div>`;
     }
@@ -105,14 +112,18 @@ function updateShowtimes(movieId, cinemaId) {
         document.getElementById(`showtime-${movieId}-${index}`).checked ? 1 : 0
     );
 
+    const payload = {
+        CinemaId: cinemaId,
+        MovieId: movieId,
+        Showtimes: selectedShowtimes
+    };
+
+    console.log("Updating Showtimes with payload:", payload); // 🛠 Debug log
+
     fetch('/Manager/api/ShowtimeApi/UpdateShowtimes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            CinemaId: cinemaId,
-            MovieId: movieId,
-            Showtimes: selectedShowtimes
-        })
+        body: JSON.stringify(payload)
     })
         .then(response => {
             if (!response.ok) {
@@ -144,3 +155,4 @@ function updateShowtimes(movieId, cinemaId) {
             });
         });
 }
+

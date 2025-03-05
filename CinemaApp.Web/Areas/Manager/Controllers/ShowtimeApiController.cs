@@ -10,7 +10,7 @@ namespace CinemaApp.Web.Areas.Manager.Controllers
     [ApiController]
     [Authorize]
     public class ShowtimeApiController : ControllerBase
-    {       
+    {
         private readonly ICinemaService _cinemaService;
 
         public ShowtimeApiController(ICinemaService cinemaService)
@@ -29,7 +29,7 @@ namespace CinemaApp.Web.Areas.Manager.Controllers
             return Ok(movies);
         }
 
-        [HttpPost]
+        [HttpPost("UpdateShowtimes")]
         public async Task<IActionResult> UpdateShowtimes([FromBody] ShowtimeViewModel model)
         {
             if (!ModelState.IsValid)
