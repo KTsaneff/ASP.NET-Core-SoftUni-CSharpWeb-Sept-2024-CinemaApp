@@ -1,5 +1,6 @@
 ﻿namespace CinemaApp.Services.Data.Interfaces
 {
+    using CinemaApp.Web.ViewModels.Showtime;
     using Web.ViewModels.Cinema;
 
     public interface ICinemaService
@@ -19,5 +20,10 @@
         Task<bool> ToggleDeleteCinemaAsync(Guid id);
 
         Task<IEnumerable<CinemaIndexViewModel>> GetAllCinemasForAdminAsync();
+
+        Task<IEnumerable<CinemaIndexViewModel>> GetCinemasWithMoviesIncludedInProgramAsync();
+
+        Task<IEnumerable<ShowtimeViewModel>> GetMoviesWithShowtimesAsync(Guid cinemaId);
+        Task<bool> UpdateShowtimeAsync(ShowtimeViewModel model);
     }
 }
