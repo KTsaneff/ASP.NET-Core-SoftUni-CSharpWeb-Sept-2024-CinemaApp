@@ -1,37 +1,53 @@
 ﻿@using CinemaApp.Web.ViewModels.Cinema
-@model IEnumerable<CinemaIndexViewModel>
+@model IEnumerable<UsersCinemaIndexViewModel>
 
 @{
-    ViewData["Title"] = "Cinemas";
+    ViewData["Title"] = "Explore Cinemas";
 }
 
 <div class="container mt-4">
-    <h2 class="text-center fw-bold text-primary">Cinemas</h2>
+    <h1 class="text-center text-primary fw-bold">Discover Cinemas Near You</h1>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover border rounded shadow-sm">
-            <thead class="table-dark text-uppercase">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Location</th>
-                    <th scope="col" class="text-center">Program</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cinema in Model)
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search for a cinema..." onkeyup="filterCinemas()">
+        </div>
+        <div class="col-md-4">
+            <select id="cityFilter" class="form-select" onchange="filterCinemas()">
+                <option value="">All Cities</option>
+                @foreach (var city in Model.Select(c => c.Location).Distinct())
                 {
-                    <tr>
-                        <td class="align-middle">@cinema.Name</td>
-                        <td class="align-middle">@cinema.Location</td>
-                        <td class="text-center align-middle">
-                            <a asp-controller="Cinema" asp-action="ViewProgram" asp-route-id="@cinema.Id"
-                               class="btn btn-primary btn-sm fw-bold shadow-sm px-3">
-                                <i class="bi bi-eye me-1"></i> View Program
-                            </a>
-                        </td>
-                    </tr>
+                    <option value="@city">@city</option>
                 }
-            </tbody>
-        </table>
+            </select>
+        </div>
+        <div class="col-md-2 text-end">
+            <input type="checkbox" id="onlyWithMovies" class="form-check-input" onchange="filterCinemas()">
+            <label for="onlyWithMovies">Only Cinemas with Movies</label>
+        </div>
+    </div>
+
+    <div class="row" id="cinemaContainer">
+        @foreach (var cinema in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4 cinema-card" data-city="@cinema.Location" data-hasmovies="@cinema.HasMovies.ToString().ToLower()">
+                <div class="card shadow-lg h-100">
+                    <img src="@Url.Content("~/images/" + cinema.ImageUrl)" 
+                    class="card-img-top" 
+                    alt="@cinema.Name">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark fw-bold">@cinema.Name</h5>
+                        <p class="card-text text-muted">@cinema.Location</p>
+                        <a asp-controller="Cinema" asp-action="Details" asp-route-id="@cinema.Id" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> View Program
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/cinemas.js"></script>
+}

@@ -17,9 +17,7 @@
         private readonly IWatchlistService watchlistService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public WatchlistController(IWatchlistService watchlistService, 
-            IManagerService managerService, UserManager<ApplicationUser> userManager)
-            : base(managerService)
+        public WatchlistController(IWatchlistService watchlistService, UserManager<ApplicationUser> userManager)
         {
             this.watchlistService = watchlistService;
             this.userManager = userManager;

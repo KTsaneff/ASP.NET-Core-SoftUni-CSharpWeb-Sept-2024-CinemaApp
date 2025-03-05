@@ -12,8 +12,7 @@
         private readonly ITicketService ticketService;
         private readonly ICinemaService cinemaService;
 
-        public TicketController(ITicketService ticketService, ICinemaService cinemaService, IManagerService managerService)
-            : base(managerService)
+        public TicketController(ITicketService ticketService, ICinemaService cinemaService)
         {
             this.ticketService = ticketService;
             this.cinemaService = cinemaService;
@@ -39,11 +38,11 @@
         [Authorize]
         public async Task<IActionResult> Manage()
         {
-            bool isManager = await this.IsUserManagerAsync();
-            if (!isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //bool isManager = await this.IsUserManagerAsync();
+            //if (!isManager)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             var cinemas = await this.cinemaService.IndexGetAllOrderedByLocationAsync();
             return View(cinemas);
@@ -53,11 +52,11 @@
         [Authorize]
         public async Task<IActionResult> SetAvailableTickets(Guid cinemaId, Guid movieId)
         {
-            bool isManager = await this.IsUserManagerAsync();
-            if (!isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //bool isManager = await this.IsUserManagerAsync();
+            //if (!isManager)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             var viewModel = new SetAvailableTicketsViewModel
             {
@@ -72,11 +71,11 @@
         [Authorize]
         public async Task<IActionResult> SetAvailableTickets(SetAvailableTicketsViewModel model)
         {
-            bool isManager = await this.IsUserManagerAsync();
-            if (!isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //bool isManager = await this.IsUserManagerAsync();
+            //if (!isManager)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             if (!ModelState.IsValid)
             {
@@ -97,45 +96,45 @@
         [Authorize]
         public async Task<IActionResult> BuyTicket(Guid cinemaId, Guid movieId)
         {
-            var userId = this.User.GetUserId();
+            //var userId = this.User.GetUserId();
 
-            bool isManager = await this.IsUserManagerAsync();
+            //bool isManager = await this.IsUserManagerAsync();
 
-            if (string.IsNullOrWhiteSpace(userId) || isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //if (string.IsNullOrWhiteSpace(userId) || isManager)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
 
-            var viewModel = new BuyTicketViewModel
-            {
-                CinemaId = cinemaId,
-                MovieId = movieId,
-                UserId = Guid.Parse(userId)
-            };
+            //var viewModel = new BuyTicketViewModel
+            //{
+            //    CinemaId = cinemaId,
+            //    MovieId = movieId,
+            //    UserId = Guid.Parse(userId)
+            //};
 
-            return View(viewModel);
+            return View();
         }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> BuyTicket(BuyTicketViewModel model)
         {
-            var userId = this.User.GetUserId();
-            bool isManager = await this.IsUserManagerAsync();
-            if (string.IsNullOrWhiteSpace(userId) || isManager)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //var userId = this.User.GetUserId();
+            //bool isManager = await this.IsUserManagerAsync();
+            //if (string.IsNullOrWhiteSpace(userId) || isManager)
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            bool result = await this.ticketService.BuyTicketAsync(model, Guid.Parse(userId));
-            if (!result)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to buy ticket. Please try again.");
-                return View(model);
-            }
+            //bool result = await this.ticketService.BuyTicketAsync(model, Guid.Parse(userId));
+            //if (!result)
+            //{
+            //    ModelState.AddModelError(string.Empty, "Unable to buy ticket. Please try again.");
+            //    return View(model);
+            //}
             return RedirectToAction(nameof(MyTickets));
         }
     }

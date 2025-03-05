@@ -9,8 +9,7 @@
     {
         private readonly IMovieService movieService;
 
-        public MovieController(IMovieService movieService, IManagerService managerService)
-            : base(managerService)
+        public MovieController(IMovieService movieService)
         {
             this.movieService = movieService;
         }

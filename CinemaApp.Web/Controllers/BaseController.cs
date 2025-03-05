@@ -1,28 +1,34 @@
 ﻿namespace CinemaApp.Web.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using Infrastructure.Extensions;
-    using Services.Data.Interfaces;
-
+    [Authorize]
     public class BaseController : Controller
     {
-        protected readonly IManagerService managerService;
 
-        public BaseController(IManagerService managerService)
+        protected bool IsUserAuthenticated()
         {
-            this.managerService = managerService;
+            return this.User.Identity?.IsAuthenticated ?? false;
+        }
+
+        protected bool IsRegularUser()
+        {
+            if(!IsUserAuthenticated())
+            {
+                return false;
+            }
+
+            return !User.IsInRole("Admin") && !User.IsInRole("Manager");
         }
 
         protected bool IsGuidValid(string? id, ref Guid parsedGuid)
         {
-            // Non-existing parameter in the URL
             if (String.IsNullOrWhiteSpace(id))
             {
                 return false;
             }
 
-            // Invalid parameter in the URL
             bool isGuidValid = Guid.TryParse(id, out parsedGuid);
             if (!isGuidValid)
             {
@@ -30,15 +36,6 @@
             }
 
             return true;
-        }
-
-        protected async Task<bool> IsUserManagerAsync()
-        {
-            string? userId = this.User.GetUserId();
-            bool isManager = await this.managerService
-                .IsUserManagerAsync(userId);
-            
-            return isManager;
         }
     }
 }
