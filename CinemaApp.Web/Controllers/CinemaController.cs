@@ -17,7 +17,9 @@
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return this.View();
+            var cinemas = await this.cinemaService.GetAllCinemasAsync();
+
+            return this.View(cinemas ?? new List<UsersCinemaIndexViewModel>());
         }
     }
 }

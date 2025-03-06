@@ -5,44 +5,59 @@
     ViewData["Title"] = "Explore Cinemas";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center text-primary fw-bold">Discover Cinemas Near You</h1>
+<!-- Background Container -->
+<div class="cinema-bg">
+    <div class="container mt-4">
+        <h1 class="text-center text-light fw-bold mb-4">Discover Cinemas Near You</h1>
 
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <input type="text" id="searchBar" class="form-control" placeholder="Search for a cinema..." onkeyup="filterCinemas()">
+        <!-- Filters Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <input type="text" id="searchBar" class="form-control shadow-sm" placeholder="Search for a cinema..." onkeyup="filterCinemas()">
+            </div>
+            <div class="col-md-4">
+                <select id="cityFilter" class="form-select shadow-sm" onchange="filterCinemas()">
+                    <option value="">All Cities</option>
+                    @foreach (var city in Model.Select(c => c.Location).Distinct())
+                    {
+                        <option value="@city">@city</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 text-end">
+                <input type="checkbox" id="onlyWithMovies" class="form-check-input shadow-sm" onchange="filterCinemas()">
+                <label for="onlyWithMovies" class="ms-1 text-light">Only Cinemas with Movies</label>
+            </div>
         </div>
-        <div class="col-md-4">
-            <select id="cityFilter" class="form-select" onchange="filterCinemas()">
-                <option value="">All Cities</option>
-                @foreach (var city in Model.Select(c => c.Location).Distinct())
-                {
-                    <option value="@city">@city</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2 text-end">
-            <input type="checkbox" id="onlyWithMovies" class="form-check-input" onchange="filterCinemas()">
-            <label for="onlyWithMovies">Only Cinemas with Movies</label>
-        </div>
-    </div>
 
-    <div class="row" id="cinemaContainer">
-        @foreach (var cinema in Model)
-        {
-            <div class="col-lg-4 col-md-6 mb-4 cinema-card" data-city="@cinema.Location" data-hasmovies="@cinema.HasMovies.ToString().ToLower()">
-                <div class="card shadow-lg h-100">
-                    <img src="@Url.Content("~/images/" + cinema.ImageUrl)" 
-                    class="card-img-top" 
-                    alt="@cinema.Name">
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-dark fw-bold">@cinema.Name</h5>
-                        <p class="card-text text-muted">@cinema.Location</p>
-                        <a asp-controller="Cinema" asp-action="Details" asp-route-id="@cinema.Id" class="btn btn-primary">
-                            <i class="fas fa-eye"></i> View Program
-                        </a>
+        <!-- Cinemas Grid -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3" id="cinemaContainer">
+            @foreach (var cinema in Model.Take(8))
+            {
+                <div class="col cinema-card" data-city="cinema.Location" data-hasmovies="cinema.HasMovies.ToString().ToLower()">
+                    <div class="card shadow-lg border-0 rounded-3 h-100">
+                        <img src="~/images/cinema-panoramic-megeve.jpg" 
+                             class="card-img-top" 
+                             alt="cinema.Name" 
+                             style="height: 160px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                        <div class="card-body text-center">
+                            <h6 class="card-title fw-bold text-dark">cinema.Name</h6>
+                            <p class="card-text text-muted small"><i class="bi bi-geo-alt-fill"></i> cinema.Location</p>
+                            <a asp-controller="Cinema" asp-action="Details" asp-route-id="cinema.Id" 
+                               class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                <i class="fas fa-eye"></i> View Program
+                            </a>
+                        </div>
                     </div>
                 </div>
+            }
+        </div>
+
+        <!-- Pagination (if more than 8 cinemas) -->
+        @if (Model.Count() > 8)
+        {
+            <div class="text-center mt-4">
+                <button id="loadMoreBtn" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">Load More</button>
             </div>
         }
     </div>
@@ -50,4 +65,71 @@
 
 @section Scripts {
     <script src="~/js/cinemas.js"></script>
+
+    <script>
+        let itemsPerPage = 8;
+        let currentPage = 1;
+        let totalItems = @Model.Count();
+        let cinemaCards = document.querySelectorAll('.cinema-card');
+
+        function loadMore() {
+            let start = currentPage * itemsPerPage;
+            let end = start + itemsPerPage;
+            
+            cinemaCards.forEach((card, index) => {
+                if (index >= start && index < end) {
+                    card.style.display = "block";
+                }
+            });
+
+            currentPage++;
+            if (currentPage * itemsPerPage >= totalItems) {
+                document.getElementById("loadMoreBtn").style.display = "none";
+            }
+        }
+
+        document.getElementById("loadMoreBtn")?.addEventListener("click", loadMore);
+
+        // Initially hide excess cinemas
+        cinemaCards.forEach((card, index) => {
+            if (index >= itemsPerPage) {
+                card.style.display = "none";
+            }
+        });
+    </script>
 }
+
+<!-- Background Styling -->
+<style>
+    .cinema-bg {
+        background: url('/images/cinema-background.jpg') center/cover no-repeat;
+        min-height: 100vh;
+        padding-bottom: 40px;
+    }
+
+    /* Ensure text is readable on background */
+    .cinema-bg h1, .cinema-bg label {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Improve card appearance */
+    .card {
+        background: rgba(255, 255, 255, 0.85); /* Slight transparency for better readability */
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    /* Make Load More button pop */
+    #loadMoreBtn {
+        background: #ff4d4d;
+        border: none;
+        transition: background 0.3s ease-in-out;
+    }
+
+    #loadMoreBtn:hover {
+        background: #e63946;
+    }
+</style>
