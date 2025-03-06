@@ -7,6 +7,8 @@
     {
         Task<IEnumerable<CinemaIndexViewModel>> IndexGetAllOrderedByLocationAsync();
 
+        Task<IEnumerable<UsersCinemaIndexViewModel>> GetAllCinemasAsync();
+
         Task AddCinemaAsync(AddCinemaFormModel model);
 
         Task<CinemaDetailsViewModel?> GetCinemaDetailsByIdAsync(Guid id);
