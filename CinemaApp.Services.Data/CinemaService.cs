@@ -42,6 +42,23 @@
             return cinemas;
         }
 
+        public async Task<IEnumerable<UsersCinemaIndexViewModel>> GetAllCinemasAsync()
+        {
+            return await this._cinemaRepository
+                .GetAllAttached()
+                .Where(c => !c.IsDeleted && c.CinemaMovies.Any(cm => !cm.Movie.IsDeleted))
+                .OrderBy(c => c.Location)
+                .ThenBy(c => c.Name)
+                .Select(c => new UsersCinemaIndexViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Location = c.Location,
+                    HasMovies = c.CinemaMovies.Any(cm => !cm.Movie.IsDeleted)
+                })
+                .ToArrayAsync();
+        }
+
 
         public async Task AddCinemaAsync(AddCinemaFormModel model)
         {
