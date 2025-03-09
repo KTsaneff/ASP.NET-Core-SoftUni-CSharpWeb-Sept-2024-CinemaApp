@@ -1,0 +1,17 @@
+﻿@model CinemaApp.Web.ViewModels.Movie.MovieDetailsViewModel
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <img src="@Model.ImageUrl" class="img-fluid rounded shadow-lg w-100" alt="@Model.Title">
+        </div>
+        <div class="col-md-7">
+            <h4 class="fw-bold">@Model.Title</h4>
+            <p><strong>Genre:</strong> @Model.Genre</p>
+            <p><strong>Release Date:</strong> @Model.ReleaseDate</p>
+            <p><strong>Director:</strong> @Model.Director</p>
+            <p><strong>Duration:</strong> @Model.Duration min</p>
+            <p class="text-muted">@Model.Description</p>
+        </div>
+    </div>
+</div>

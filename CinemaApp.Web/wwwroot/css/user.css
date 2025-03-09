@@ -56,3 +56,41 @@ h1, label {
     .btn-secondary:hover {
         background: #5a6268;
     }
+
+.cinema-index-card .btn {
+    background-color: #657791;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+    .cinema-index-card .btn:hover {
+        background-color: #57657a;
+        transform: scale(1.05);
+    }
+
+    .cinema-index-card .btn:active {
+        background-color: #8fa8cb;
+        transform: scale(0.98);
+    }
+
+.cinema-program-card .btn {
+    background-color: #657791;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+    .cinema-program-card .btn:hover {
+        background-color: #57657a;
+        transform: scale(1.05);
+    }
+
+    .cinema-program-card .btn:active {
+        background-color: #8fa8cb;
+        transform: scale(0.98);
+    }
