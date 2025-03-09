@@ -1,32 +1,27 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("searchCinemas");
-    const filterCity = document.getElementById("filterCity");
-    const filterMovies = document.getElementById("filterMovies");
-    const cinemaCards = document.querySelectorAll(".cinema-card");
+    let searchBar = document.getElementById("searchBar");
+    let cityFilter = document.getElementById("cityFilter");
 
     function filterCinemas() {
-        const searchText = searchInput.value.toLowerCase();
-        const selectedCity = filterCity.value;
-        const showWithMovies = filterMovies.checked;
+        let searchValue = searchBar.value.toLowerCase();
+        let cityValue = cityFilter.value.toLowerCase();
+        let cinemaCards = document.querySelectorAll(".cinema-card");
 
-        cinemaCards.forEach(card => {
-            const cinemaName = card.dataset.name.toLowerCase();
-            const cinemaCity = card.dataset.city;
-            const hasMovies = card.dataset.hasMovies === "true";
+        cinemaCards.forEach(cinema => {
+            let cinemaName = cinema.querySelector(".card-title").textContent.toLowerCase();
+            let cinemaCity = cinema.getAttribute("data-city").toLowerCase();
 
-            const matchesSearch = cinemaName.includes(searchText);
-            const matchesCity = selectedCity === "" || cinemaCity === selectedCity;
-            const matchesMovies = !showWithMovies || hasMovies;
+            let matchesSearch = searchValue === "" || cinemaName.includes(searchValue);
+            let matchesCity = cityValue === "" || cinemaCity === cityValue;
 
-            if (matchesSearch && matchesCity && matchesMovies) {
-                card.style.display = "block";
+            if (matchesSearch && matchesCity) {
+                cinema.style.display = "block";
             } else {
-                card.style.display = "none";
+                cinema.style.display = "none";
             }
         });
     }
 
-    searchInput.addEventListener("input", filterCinemas);
-    filterCity.addEventListener("change", filterCinemas);
-    filterMovies.addEventListener("change", filterCinemas);
+    searchBar.addEventListener("keyup", filterCinemas);
+    cityFilter.addEventListener("change", filterCinemas);
 });

@@ -7,6 +7,8 @@
 
     public class MovieDetailsViewModel : IMapFrom<Movie>, IHaveCustomMappings
     {
+        public Guid Id { get; set; }
+
         public string Title { get; set; } = null!;
 
         public string Genre { get; set; } = null!;
@@ -15,9 +17,11 @@
 
         public string Director { get; set; } = null!;
 
-        public string Duration { get; set; } = null!;
+        public int Duration { get; set; }
 
         public string Description { get; set; } = null!;
+
+        public string ImageUrl { get; set; } = null!;
 
         public void CreateMappings(IProfileExpression configuration)
         {

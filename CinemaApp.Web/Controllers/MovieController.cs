@@ -1,5 +1,6 @@
 ﻿namespace CinemaApp.Web.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using Services.Data.Interfaces;
@@ -41,6 +42,16 @@
             }
 
             return this.View(movie);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> DetailsPartial(Guid id)
+        {
+            var movie = await this.movieService.GetMovieDetailsByIdAsync(id);
+
+            if(movie == null) return this.NotFound();
+
+            return PartialView("_MovieDetailsPartial", movie);
         }
     }
 }

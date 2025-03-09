@@ -1,0 +1,58 @@
+﻿/* Common styles for Cinema Index and Cinema Program */
+html, body {
+    background-color: #4a4a4a;
+    color: white;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background: transparent !important;
+}
+
+.cinema-bg {
+    background: transparent !important;
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+h1, label {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.85);
+    transition: transform 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+.movie-card-img-top {
+    height: 400px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+#loadMoreBtn {
+    background: #ff4d4d;
+    border: none;
+    transition: background 0.3s ease-in-out;
+}
+
+    #loadMoreBtn:hover {
+        background: #e63946;
+    }
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+    transition: background 0.3s ease-in-out;
+}
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }

@@ -57,15 +57,20 @@
 
         public async Task<MovieDetailsViewModel?> GetMovieDetailsByIdAsync(Guid id)
         {
-            Movie? movie = await this.movieRepository
-                .GetByIdAsync(id);
-            MovieDetailsViewModel? viewModel = new MovieDetailsViewModel();
-            if (movie != null)
-            {
-                AutoMapperConfig.MapperInstance.Map(movie, viewModel);
-            }
-
-            return viewModel;
+            return await this.movieRepository
+                .GetAllAttached()
+                .Where(m => m.Id == id && !m.IsDeleted)
+                .Select(m => new MovieDetailsViewModel
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Genre = m.Genre,
+                    Director = m.Director,
+                    Description = m.Description,
+                    Duration = m.Duration,
+                    ReleaseDate = m.ReleaseDate.ToString("yyyy-MM-dd"),
+                    ImageUrl = m.ImageUrl
+                }).FirstOrDefaultAsync();
         }
 
         public async Task<AddMovieToCinemaInputModel?> GetAddMovieToCinemaInputModelByIdAsync(Guid id)

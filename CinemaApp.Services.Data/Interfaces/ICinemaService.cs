@@ -1,5 +1,6 @@
 ﻿namespace CinemaApp.Services.Data.Interfaces
 {
+    using CinemaApp.Web.ViewModels.Movie;
     using CinemaApp.Web.ViewModels.Showtime;
     using Web.ViewModels.Cinema;
 
@@ -27,5 +28,9 @@
 
         Task<IEnumerable<ShowtimeViewModel>> GetMoviesWithShowtimesAsync(Guid cinemaId);
         Task<bool> UpdateShowtimeAsync(ShowtimeViewModel model);
+
+        Task<IEnumerable<MovieUserProgramViewModel>> GetUserProgramAsync(Guid cinemaId);
+
+        Task<UserProgramCinemaViewModel> GetCinemaForUserProgramById(Guid id);
     }
 }

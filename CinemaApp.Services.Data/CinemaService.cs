@@ -233,10 +233,6 @@
                 }).ToList();
         }
 
-
-        /// <summary>
-        /// Updates the showtimes for a specific movie in a cinema.
-        /// </summary>
         public async Task<bool> UpdateShowtimeAsync(ShowtimeViewModel model)
         {
             var cinema = await this._cinemaRepository
@@ -254,5 +250,48 @@
             return await this._cinemaRepository.UpdateAsync(cinema);
         }
 
+        public async Task<IEnumerable<MovieUserProgramViewModel>> GetUserProgramAsync(Guid cinemaId)
+        {
+            var cinema = await this._cinemaRepository
+                .GetAllAttached()
+                .Include(c => c.CinemaMovies)
+                .ThenInclude(cm => cm.Movie)
+                .FirstOrDefaultAsync(c => c.Id == cinemaId && !c.IsDeleted);
+
+            if(cinema == null)
+            {
+                Console.WriteLine("Cinema not found");
+                return Enumerable.Empty<MovieUserProgramViewModel>();
+            }
+
+            var movies = cinema.CinemaMovies
+                .Where(cm => !cm.IsDeleted && !cm.Movie.IsDeleted)
+                .Select(cm => new MovieUserProgramViewModel
+                {
+                    Id = cm.MovieId,
+                    Title = cm.Movie.Title,
+                    Director = cm.Movie.Director,
+                    ImageUrl = cm.Movie.ImageUrl
+                }).ToList();
+
+            return movies;
+        }
+
+        public async Task<UserProgramCinemaViewModel> GetCinemaForUserProgramById(Guid id)
+        {
+            var cinemaToReturn = await this._cinemaRepository
+                .GetAllAttached()
+                .Where(c => c.Id == id)
+                .Select(c => new UserProgramCinemaViewModel
+                {
+                    Id = c.Id,
+                    CinemaName = c.Name,
+                    CinemaLocation = c.Location
+                })
+                .FirstOrDefaultAsync();
+
+
+            return cinemaToReturn;
+        }
     }
 }
