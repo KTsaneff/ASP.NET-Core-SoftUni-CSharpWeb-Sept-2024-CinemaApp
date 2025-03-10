@@ -14,7 +14,6 @@
     </div>
 
     <div class="d-flex flex-column gap-2">
-        <!-- Reduce spacing between rows -->
         @foreach (var movie in Model)
         {
             <div class="card shadow-lg border-0 rounded-3 d-flex flex-row align-items-center p-2"
@@ -35,41 +34,24 @@
                     </p>
                 </div>
 
-                <div class="me-3">
+                <div class="me-3 d-flex gap-2">
                     <button class="btn btn-outline-primary btn-sm rounded-pill px-3 view-details-btn"
                             data-movie-id="@movie.Id">
                         <i class="fas fa-eye"></i> View Details
                     </button>
+
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <button class="btn btn-outline-warning btn-sm rounded-pill px-3 add-to-watchlist-btn"
+                                data-movie-id="@movie.Id">
+                            <i class="fas fa-bookmark"></i> Add to Watchlist
+                        </button>
+                    }
+
+
                 </div>
             </div>
         }
-    </div>
-</div>
-
-<div class="modal fade" id="movieDetailsModal" tabindex="-1" aria-labelledby="movieDetailsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="movieDetailsLabel"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body bg-light text-dark">
-                <div id="movieDetailsContent" class="p-3">
-                </div>
-            </div>
-
-            <div class="modal-footer bg-white">
-                @if (User?.Identity?.IsAuthenticated ?? false)
-                {
-                    <button id="buy-ticket-btn" class="btn btn-check">See Showtimes</button>
-                    <button id="add-to-watchlist-btn" class="btn btn-warning">Add to Watchlist</button>
-                }
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-
-        </div>
     </div>
 </div>
 
@@ -77,3 +59,6 @@
     <script src="~/js/movies.js"></script>
 }
 <link rel="stylesheet" href="~/css/user.css">
+
+@await Html.PartialAsync("_MovieDetailsModal")
+

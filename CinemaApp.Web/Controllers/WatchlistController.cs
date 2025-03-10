@@ -1,82 +1,108 @@
 ﻿namespace CinemaApp.Web.Controllers
 {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
-    using Data.Models;
-    using Services.Data.Interfaces;
-    using System.Collections.Generic;
-    using ViewModels.Watchlist;
-    
-    using static Common.ErrorMessages.Watchlist;
-
-    [Authorize]
-    public class WatchlistController : BaseController
+    namespace CinemaApp.Web.Controllers
     {
-        private readonly IWatchlistService watchlistService;
-        private readonly UserManager<ApplicationUser> userManager;
+        using Microsoft.AspNetCore.Authorization;
+        using Microsoft.AspNetCore.Identity;
+        using Microsoft.AspNetCore.Mvc;
 
-        public WatchlistController(IWatchlistService watchlistService, UserManager<ApplicationUser> userManager)
+        using Data.Models;
+        using Services.Data.Interfaces;
+        using System.Collections.Generic;
+        using ViewModels.Watchlist;
+
+        using static Common.ErrorMessages.Watchlist;
+
+        [Authorize]
+        public class WatchlistController : BaseController
         {
-            this.watchlistService = watchlistService;
-            this.userManager = userManager;
-        }
+            private readonly IWatchlistService watchlistService;
+            private readonly UserManager<ApplicationUser> userManager;
 
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            string userId = this.userManager.GetUserId(User)!;
-            if (String.IsNullOrWhiteSpace(userId))
+            public WatchlistController(IWatchlistService watchlistService, UserManager<ApplicationUser> userManager)
             {
-                return this.RedirectToPage("/Identity/Account/Login");
+                this.watchlistService = watchlistService;
+                this.userManager = userManager;
             }
 
-            IEnumerable<ApplicationUserWatchlistViewModel> watchList =
-                await this.watchlistService
-                    .GetUserWatchListByUserIdAsync(userId);
-
-            return View(watchList);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddToWatchlist(string? movieId)
-        {
-            string userId = this.userManager.GetUserId(User)!;
-            if (String.IsNullOrWhiteSpace(userId))
+            [HttpGet]
+            public async Task<IActionResult> Index()
             {
-                return this.RedirectToPage("/Identity/Account/Login");
+                string userId = this.userManager.GetUserId(User)!;
+                if (String.IsNullOrWhiteSpace(userId))
+                {
+                    return this.RedirectToPage("/Identity/Account/Login");
+                }
+
+                IEnumerable<ApplicationUserWatchlistViewModel> watchList =
+                    await this.watchlistService
+                        .GetUserWatchListByUserIdAsync(userId);
+
+                return View(watchList);
             }
 
-            bool result = await this.watchlistService
-                .AddMovieToUserWatchListAsync(movieId, userId);
-            if (result == false)
+            [HttpPost]
+            public async Task<IActionResult> AddToWatchlist(string? movieId)
             {
-                TempData[nameof(AddToWatchListNotSuccessfullMessage)] = AddToWatchListNotSuccessfullMessage;
-                return this.RedirectToAction("Index", "Movie");
+                string userId = this.userManager.GetUserId(User)!;
+                if (String.IsNullOrWhiteSpace(userId))
+                {
+                    return this.RedirectToPage("/Identity/Account/Login");
+                }
+
+                if (String.IsNullOrWhiteSpace(movieId))
+                {
+                    TempData["ErrorMessage"] = "Invalid movie ID.";
+                    return this.RedirectToAction("Index", "Movie");
+                }
+
+                bool result = await this.watchlistService.AddMovieToUserWatchListAsync(movieId, userId);
+                if (!result)
+                {
+                    TempData["ErrorMessage"] = "Failed to add movie to watchlist.";
+                    return this.RedirectToAction("Index", "Movie");
+                }
+
+                TempData["SuccessMessage"] = "Movie added to watchlist successfully.";
+                return this.RedirectToAction(nameof(Index));
             }
 
-            return this.RedirectToAction(nameof(Index));
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveFromWatchlist(string? movieId)
-        {
-            string userId = this.userManager.GetUserId(User)!;
-            if (String.IsNullOrWhiteSpace(userId))
+            [HttpPost]
+            public async Task<IActionResult> RemoveFromWatchlist(string? movieId)
             {
-                return this.RedirectToPage("/Identity/Account/Login");
+                string userId = this.userManager.GetUserId(User)!;
+                if (String.IsNullOrWhiteSpace(userId))
+                {
+                    return this.RedirectToPage("/Identity/Account/Login");
+                }
+
+                bool result = await this.watchlistService
+                    .RemoveMovieFromUserWatchListAsync(movieId, userId);
+                if (result == false)
+                {
+                    return this.RedirectToAction("Index", "Movie");
+                }
+
+                return this.RedirectToAction(nameof(Index));
             }
 
-            bool result = await this.watchlistService
-                .RemoveMovieFromUserWatchListAsync(movieId, userId);
-            if (result == false)
+            [HttpGet]
+            public async Task<IActionResult> IsInWatchlist(string? movieId)
             {
-                // TODO: Implement a way to transfer the Error Message to the View
-                return this.RedirectToAction("Index", "Movie");
+                string userId = this.userManager.GetUserId(User)!;
+                if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(movieId))
+                {
+                    return Json(false);
+                }
+
+                bool isInWatchlist = await this.watchlistService
+                    .IsMovieInUserWatchlistAsync(movieId, userId);
+
+                return Json(isInWatchlist);
             }
 
-            return this.RedirectToAction(nameof(Index));
         }
     }
 }

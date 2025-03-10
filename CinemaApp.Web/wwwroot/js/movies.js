@@ -1,7 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DOM fully loaded and parsed.");
 
-    // Get the modal element
     const modalElement = document.getElementById("movieDetailsModal");
     if (!modalElement) {
         console.error("❌ Error: Modal element #movieDetailsModal not found!");
@@ -14,7 +13,7 @@
     // Attach event listeners to all 'View Details' buttons
     const viewDetailsButtons = document.querySelectorAll(".view-details-btn");
     if (viewDetailsButtons.length === 0) {
-        console.warn("⚠️ Warning: No '.view-details-btn' elements found on the page.");
+        console.warn("⚠️ No '.view-details-btn' elements found on the page.");
     }
 
     viewDetailsButtons.forEach(button => {
@@ -36,18 +35,38 @@
 
                     detailsContainer.innerHTML = data;
 
-                    // Get movie title from the modal content
                     let movieTitleElement = detailsContainer.querySelector("h3");
                     let movieTitle = movieTitleElement ? movieTitleElement.textContent : "Movie Details";
                     document.getElementById("movieDetailsLabel").textContent = movieTitle;
 
-                    // Ensure modal content is displayed properly
-                    detailsContainer.style.display = "block";
+                    let modalWatchlistBtn = document.getElementById("add-to-watchlist-btn");
 
-                    // Show the modal
+                    if (modalWatchlistBtn) {
+                        modalWatchlistBtn.setAttribute("data-movie-id", movieId);
+
+                        // Check if the current page is Watchlist, then hide the button
+                        if (window.location.pathname.includes("/Watchlist")) {
+                            modalWatchlistBtn.style.display = "none";
+                        } else {
+                            // Make AJAX request to check if the movie is already in the watchlist
+                            fetch(`/Watchlist/IsMovieInWatchlist/${movieId}`)
+                                .then(response => response.json())
+                                .then(isInWatchlist => {
+                                    if (isInWatchlist) {
+                                        modalWatchlistBtn.style.display = "none";
+                                    } else {
+                                        modalWatchlistBtn.style.display = "inline-block";
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("⚠️ Error checking watchlist status:", error);
+                                });
+                        }
+                    }
+
+                    detailsContainer.style.display = "block";
                     movieDetailsModal.show();
 
-                    // Attach dynamic event listeners after content is loaded
                     attachDynamicEventListeners();
                 })
                 .catch(error => {
@@ -61,25 +80,65 @@
         setTimeout(() => {
             console.log("🔄 Attaching dynamic event listeners...");
 
-            const buyTicketBtn = document.querySelector("#buy-ticket-btn");
-            if (buyTicketBtn) {
-                buyTicketBtn.addEventListener("click", function () {
-                    alert("🎟 Ticket buying functionality will be implemented soon!");
-                });
-                console.log("✅ 'Buy Ticket' button found and event attached.");
-            } else {
-                console.warn("⚠️ 'Buy Ticket' button not found.");
-            }
+            $("#add-to-watchlist-btn").off("click").on("click", function () {
+                let movieId = $(this).data("movie-id");
 
-            const addToWatchlistBtn = document.querySelector("#add-to-watchlist-btn");
-            if (addToWatchlistBtn) {
-                addToWatchlistBtn.addEventListener("click", function () {
-                    alert("📌 Adding to watchlist functionality will be implemented soon!");
-                });
-                console.log("✅ 'Add to Watchlist' button found and event attached.");
-            } else {
-                console.warn("⚠️ 'Add to Watchlist' button not found.");
-            }
-        }, 200); // Wait for content to load before attaching listeners
+                if (!movieId) {
+                    Swal.fire("Error!", "Movie ID is missing.", "error");
+                    return;
+                }
+
+                $.post("/Watchlist/AddToWatchlist", { movieId: movieId })
+                    .done(function () {
+                        Swal.fire({
+                            title: "Added!",
+                            text: "The movie has been added to your watchlist.",
+                            icon: "success",
+                            confirmButtonColor: "#28a745"
+                        });
+
+                        $("#add-to-watchlist-btn").hide(); // Hide button after adding
+                    })
+                    .fail(function () {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Failed to add the movie to your watchlist. Please try again.",
+                            icon: "error",
+                            confirmButtonColor: "#dc3545"
+                        });
+                    });
+            });
+
+        }, 200);
     }
+});
+
+// jQuery for "Add to Watchlist" buttons in the Movie List
+$(document).ready(function () {
+    $(".add-to-watchlist-btn").on("click", function () {
+        const movieId = $(this).data("movie-id");
+
+        if (!movieId) {
+            Swal.fire("Error!", "Movie ID is missing.", "error");
+            return;
+        }
+
+        $.post("/Watchlist/AddToWatchlist", { movieId: movieId })
+            .done(function () {
+                Swal.fire({
+                    title: "Added!",
+                    text: "The movie has been added to your watchlist.",
+                    icon: "success",
+                    confirmButtonColor: "#28a745"
+                });
+            })
+            .fail(function () {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Failed to add the movie to your watchlist. Please try again.",
+                    icon: "error",
+                    confirmButtonColor: "#dc3545"
+                });
+            });
+    });
 });

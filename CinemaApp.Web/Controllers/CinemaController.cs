@@ -1,6 +1,6 @@
 ﻿namespace CinemaApp.Web.Controllers
 {
-    using CinemaApp.Web.ViewModels.Cinema;
+    using global::CinemaApp.Web.ViewModels.Cinema;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Services.Data.Interfaces;
