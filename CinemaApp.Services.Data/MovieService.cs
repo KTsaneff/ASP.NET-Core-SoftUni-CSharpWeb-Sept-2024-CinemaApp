@@ -32,6 +32,7 @@
         {
             return await movieRepository
                 .GetAllAttached()
+                .Where(m => !m.IsDeleted)
                 .To<AllMoviesIndexViewModel>()
                 .ToArrayAsync();
         }

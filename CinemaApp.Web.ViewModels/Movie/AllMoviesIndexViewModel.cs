@@ -18,6 +18,8 @@
 
         public string Duration { get; set; } = null!;
 
+        public string? ImageUrl { get; set; }
+
         public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<Movie, AllMoviesIndexViewModel>()

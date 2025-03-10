@@ -16,15 +16,14 @@
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
-        {
-            IEnumerable<AllMoviesIndexViewModel> allMovies =
-                await this.movieService.GetAllMoviesAsync();
-
-            return this.View(allMovies);
+        {               
+            return this.View(await this.movieService.GetAllMoviesAsync());
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(string? id)
         {
             if (!Guid.TryParse(id, out Guid movieGuid))

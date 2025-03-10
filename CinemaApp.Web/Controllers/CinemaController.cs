@@ -34,6 +34,7 @@
             }
 
             ViewData["CinemaData"] = cinema.ToString();
+            ViewData["CinemaId"] = id;
 
             return this.View(movies);
         }
