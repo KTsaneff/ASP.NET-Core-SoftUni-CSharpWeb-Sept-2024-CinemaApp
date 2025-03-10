@@ -12,7 +12,6 @@
     {
         public void Configure(EntityTypeBuilder<Movie> builder)
         {
-            // Fluent API
             builder.HasKey(m => m.Id);
 
             builder
@@ -44,13 +43,13 @@
             builder.HasData(this.SeedMovies());
         }
 
-        private List<Movie> SeedMovies()
+        public List<Movie> SeedMovies()
         {
             List<Movie> movies = new List<Movie>()
             {
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("ae50a5ab-9642-466f-b528-3cc61071bb4c"),
                     Title = "Harry Potter and the Goblet of Fire",
                     Genre = "Fantasy",
                     ReleaseDate = new DateTime(2005, 11, 01),
@@ -61,7 +60,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("777634e2-3bb6-4748-8e91-7a10b70c78ac"),
                     Title = "Lord of the Rings",
                     Genre = "Fantasy",
                     ReleaseDate = new DateTime(2001, 05, 01),
@@ -72,7 +71,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("68fb84b9-ef2a-402f-b4fc-595006f5c275"),
                     Title = "Inception",
                     Genre = "Sci-Fi",
                     ReleaseDate = new DateTime(2010, 07, 16),
@@ -83,7 +82,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("02b52bb0-1c2b-49a4-ba66-6d33f81d38d1"),
                     Title = "The Dark Knight",
                     Genre = "Action",
                     ReleaseDate = new DateTime(2008, 07, 18),
@@ -94,7 +93,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("16376cc6-b3e0-4bf7-a0e4-9cbd1490522c"),
                     Title = "Interstellar",
                     Genre = "Sci-Fi",
                     ReleaseDate = new DateTime(2014, 11, 07),
@@ -105,7 +104,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("811a1a9e-61a8-4f6f-acb0-55a252c2b713"),
                     Title = "Avatar",
                     Genre = "Sci-Fi",
                     ReleaseDate = new DateTime(2009, 12, 18),
@@ -116,7 +115,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("ab2c3213-48a7-41ea-9393-45c60ef813e6"),
                     Title = "Titanic",
                     Genre = "Romance",
                     ReleaseDate = new DateTime(1997, 12, 19),
@@ -127,7 +126,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("844d9abd-104d-41ab-b14a-ce059779ad91"),
                     Title = "The Matrix",
                     Genre = "Sci-Fi",
                     ReleaseDate = new DateTime(1999, 03, 31),
@@ -138,7 +137,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("54082f99-023b-4d68-89ac-44c00a0958d0"),
                     Title = "Forrest Gump",
                     Genre = "Drama",
                     ReleaseDate = new DateTime(1994, 07, 06),
@@ -149,7 +148,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("bf9ff8b3-3209-4b18-9f4b-5172c45b73f9"),
                     Title = "Gladiator",
                     Genre = "Action",
                     ReleaseDate = new DateTime(2000, 05, 05),
@@ -160,7 +159,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("e00208b1-cb12-4bd4-8ac1-36ab62f7b4c9"),
                     Title = "The Shawshank Redemption",
                     Genre = "Drama",
                     ReleaseDate = new DateTime(1994, 09, 23),
@@ -171,7 +170,7 @@
                 },
                 new Movie()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("4491b6f5-2a11-4c4c-8c6b-c371f47d2152"),
                     Title = "Pulp Fiction",
                     Genre = "Crime",
                     ReleaseDate = new DateTime(1994, 10, 14),

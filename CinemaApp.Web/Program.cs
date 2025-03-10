@@ -1,6 +1,7 @@
 namespace CinemaApp.Web
 {
     using CinemaApp.Data.Configuration;
+    using CinemaApp.Web.Helpers;
     using Data;
     using Data.Models;
     using Infrastructure.Extensions;
@@ -53,10 +54,11 @@ namespace CinemaApp.Web
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var dbContext = services.GetRequiredService<CinemaDbContext>();
 
-                DatabaseSeeder.SeedRoles(services);
-                DatabaseSeeder.AssignAdminRole(services);
+                DatabaseHelper.SeedDatabase(services, dbContext);
             }
+
 
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).Assembly);
 
