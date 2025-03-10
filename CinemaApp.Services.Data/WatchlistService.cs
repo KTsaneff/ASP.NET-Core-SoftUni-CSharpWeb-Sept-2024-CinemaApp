@@ -15,7 +15,7 @@
         private readonly IRepository<ApplicationUserMovie, object> userMovieRepository;
         private readonly IRepository<Movie, Guid> movieRepository;
 
-        public WatchlistService(IRepository<ApplicationUserMovie, object> userMovieRepository, 
+        public WatchlistService(IRepository<ApplicationUserMovie, object> userMovieRepository,
             IRepository<Movie, Guid> movieRepository)
         {
             this.userMovieRepository = userMovieRepository;
@@ -76,25 +76,38 @@
                 return false;
             }
 
-            Movie? movie = await this.movieRepository
-                .GetByIdAsync(movieGuid);
-            if (movie == null)
+            Guid userGuid;
+            if (!Guid.TryParse(userId, out userGuid))
             {
                 return false;
             }
 
-            Guid userGuid = Guid.Parse(userId);
-
-            // TODO: Implement Soft-Delete
             ApplicationUserMovie? applicationUserMovie = await this.userMovieRepository
                 .FirstOrDefaultAsync(um => um.MovieId == movieGuid &&
                                            um.ApplicationUserId == userGuid);
             if (applicationUserMovie != null)
             {
                 await this.userMovieRepository.DeleteAsync(applicationUserMovie);
+                await this.userMovieRepository.SaveChangesAsync();
             }
 
             return true;
         }
+
+        public async Task<bool> IsMovieInUserWatchlistAsync(string movieId, string userId)
+        {
+            Guid movieGuid = Guid.Empty;
+            if (!this.IsGuidValid(movieId, ref movieGuid))
+            {
+                return false;
+            }
+
+            Guid userGuid = Guid.Parse(userId);
+
+            return await this.userMovieRepository
+            .GetAllAttached()
+            .AnyAsync(um => um.MovieId == movieGuid && um.ApplicationUserId == userGuid);
+        }
+
     }
 }

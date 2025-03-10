@@ -9,5 +9,7 @@
         Task<bool> AddMovieToUserWatchListAsync(string? movieId, string userId);
 
         Task<bool> RemoveMovieFromUserWatchListAsync(string? movieId, string userId);
+
+        public Task<bool> IsMovieInUserWatchlistAsync(string movieId, string userId);
     }
 }

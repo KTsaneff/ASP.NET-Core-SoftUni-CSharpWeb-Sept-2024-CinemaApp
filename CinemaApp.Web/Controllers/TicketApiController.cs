@@ -26,54 +26,7 @@ namespace CinemaApp.Web.Controllers
             this.cinemaService = cinemaService;
             this.managerService = managerService;
         }
-
-        private async Task<bool> IsUserManagerAsync()
-        {
-            var userId = this.User.GetUserId();
-            return !string.IsNullOrWhiteSpace(userId) && await this.managerService.IsUserManagerAsync(userId);
-        }
-
-        [HttpGet("GetMoviesByCinema/{cinemaId}")]
-        public async Task<IActionResult> GetMoviesByCinema(Guid cinemaId)
-        {
-            if (!await IsUserManagerAsync())
-            {
-                return Unauthorized("Only managers can access this endpoint.");
-            }
-
-            var cinemaProgram = await this.cinemaService.GetCinemaProgramByIdAsync(cinemaId);
-
-            if (cinemaProgram == null)
-            {
-                return NotFound("Cinema not found.");
-            }
-
-            return Ok(cinemaProgram.Movies);
-        }
-
-
-        [HttpPost("UpdateAvailableTickets")]
-        public async Task<IActionResult> UpdateAvailableTickets([FromBody] SetAvailableTicketsViewModel model)
-        {
-            if (!await IsUserManagerAsync())
-            {
-                return Unauthorized("Only managers can access this endpoint.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await this.ticketService.SetAvailableTicketsAsync(model);
-            if (!result)
-            {
-                return BadRequest("Failed to update available tickets. Please try again.");
-            }
-
-            return Ok("Ticket availability updated successfully.");
-        }
-
+        
         [HttpPost("BuyTicket")]
         public async Task<IActionResult> BuyTicket([FromBody] BuyTicketRequest request)
         {
@@ -107,6 +60,12 @@ namespace CinemaApp.Web.Controllers
             }
 
             return Ok("Ticket(s) purchased successfully.");
+        }
+
+            private async Task<bool> IsUserManagerAsync()
+        {
+            var userId = this.User.GetUserId();
+            return !string.IsNullOrWhiteSpace(userId) && await this.managerService.IsUserManagerAsync(userId);
         }
     }
 }

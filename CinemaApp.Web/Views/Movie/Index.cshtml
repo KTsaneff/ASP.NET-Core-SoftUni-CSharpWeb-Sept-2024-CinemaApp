@@ -1,83 +1,64 @@
-﻿@using CinemaApp.Services.Data.Interfaces
-@using CinemaApp.Web.Infrastructure.Extensions
-@using CinemaApp.Web.ViewModels.Movie
-@using static CinemaApp.Common.ErrorMessages.Watchlist
-
+﻿@using CinemaApp.Web.ViewModels.Movie
 @model IEnumerable<AllMoviesIndexViewModel>
-@inject IManagerService managerService
 
-@if (TempData[nameof(AddToWatchListNotSuccessfullMessage)] != null)
-{
-    <div class="alert alert-danger text-center fw-bold" role="alert">
-        @TempData[nameof(AddToWatchListNotSuccessfullMessage)]
-    </div>
+@{
+    ViewData["Title"] = "All Movies";
 }
 
 <div class="container mt-4">
-    <h2 class="text-center fw-bold text-primary">All Movies</h2>
-
-    <div class="table-responsive">
-        <table class="table table-striped table-hover border rounded shadow-sm">
-            <thead class="table-dark text-uppercase">
-                <tr>
-                    <th>Title</th>
-                    <th>Genre</th>
-                    <th>Release Date</th>
-                    <th>Duration</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (AllMoviesIndexViewModel movie in Model)
-                {
-                    <tr>
-                        <td class="align-middle">@movie.Title</td>
-                        <td class="align-middle">@movie.Genre</td>
-                        <td class="align-middle">@movie.ReleaseDate</td>
-                        <td class="align-middle">@movie.Duration minutes</td>
-                        <td class="text-center align-middle">
-                            <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-info btn-sm fw-bold shadow-sm px-3">
-                                <i class="bi bi-info-circle"></i> Details
-                            </a>
-
-                            @if (User?.Identity?.IsAuthenticated ?? false)
-                            {
-                                <form asp-controller="Watchlist" asp-action="AddToWatchlist" method="post" class="d-inline">
-                                    <input type="hidden" name="movieId" value="@movie.Id" />
-                                    <button type="submit" class="btn btn-warning btn-sm fw-bold shadow-sm px-3">
-                                        <i class="bi bi-bookmark-plus"></i> Watchlist
-                                    </button>
-                                </form>
-
-                                @if (await this.managerService.IsUserManagerAsync(this.User.GetUserId()))
-                                {
-                                    <a asp-action="AddToProgram" asp-route-id="@movie.Id" class="btn btn-primary btn-sm fw-bold shadow-sm px-3">
-                                        <i class="bi bi-calendar-plus"></i> Add to Program
-                                    </a>
-                                    <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-success btn-sm fw-bold shadow-sm px-3">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-danger btn-sm fw-bold shadow-sm px-3">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </a>
-                                }
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-light fw-bold">Explore Movies</h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Home Page
+        </a>
     </div>
 
-    @if (User?.Identity?.IsAuthenticated ?? false)
-    {
-        @if (await this.managerService.IsUserManagerAsync(this.User.GetUserId()))
+    <div class="d-flex flex-column gap-2">
+        @foreach (var movie in Model)
         {
-            <div class="text-center mt-3">
-                <a asp-action="Create" class="btn btn-primary btn-lg fw-bold shadow-sm">
-                    <i class="bi bi-plus-circle"></i> Add New Movie
-                </a>
+            <div class="card shadow-lg border-0 rounded-3 d-flex flex-row align-items-center p-2"
+                 style="height: 140px; max-height: 140px;">
+
+                <img src="@movie.ImageUrl" class="rounded"
+                     alt="@movie.Title"
+                     style="width: 100px; height: 130px; object-fit: cover;">
+
+                <div class="card-body ms-3 p-2 text-light" style="flex-grow: 1;">
+                    <h6 class="fw-bold mb-1 text-dark">@movie.Title</h6>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                        <strong>Genre:</strong> @movie.Genre |
+                        <strong>Director:</strong> @movie.Director
+                    </p>
+                    <p class="text-muted mb-1" style="font-size: 0.85rem;">
+                        <strong>Released:</strong> @movie.ReleaseDate
+                    </p>
+                </div>
+
+                <div class="me-3 d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm rounded-pill px-3 view-details-btn"
+                            data-movie-id="@movie.Id">
+                        <i class="fas fa-eye"></i> View Details
+                    </button>
+
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <button class="btn btn-outline-warning btn-sm rounded-pill px-3 add-to-watchlist-btn"
+                                data-movie-id="@movie.Id">
+                            <i class="fas fa-bookmark"></i> Add to Watchlist
+                        </button>
+                    }
+
+
+                </div>
             </div>
         }
-    }
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/movies.js"></script>
+}
+<link rel="stylesheet" href="~/css/user.css">
+
+@await Html.PartialAsync("_MovieDetailsModal")
+

@@ -60,12 +60,32 @@ namespace CinemaApp.Services.Data
 
         public async Task<IEnumerable<UserTicketViewModel>> GetUserTicketsAsync(Guid userId)
         {
-            return await this.ticketRepository
+            var tickets = await this.ticketRepository
                 .GetAllAttached()
                 .Where(t => t.UserId == userId)
-                .To<UserTicketViewModel>()
-                .ToArrayAsync();
+                .Include(t => t.Movie)
+                .Include(t => t.Cinema)
+                .ToListAsync();
+
+            var groupedTickets = tickets
+                .Where(t => t.Movie != null && t.Cinema != null)
+                .GroupBy(t => new { Title = t.Movie.Title, CinemaName = t.Cinema.Name })
+                .Select(g => new UserTicketViewModel
+                {
+                    MovieTitle = g.Key.Title,
+                    CinemaName = g.Key.CinemaName,
+                    ImageUrl = g.First().Movie.ImageUrl,
+                    TicketCount = g.Count(),
+                    Price = g.Sum(t => t.Price)
+                })
+                .ToList();
+
+            return groupedTickets;
         }
+
+
+
+
         public async Task<bool> SetAvailableTicketsAsync(SetAvailableTicketsViewModel model)
         {
             var cinemaMovie = await this.cinemaMovieRepository

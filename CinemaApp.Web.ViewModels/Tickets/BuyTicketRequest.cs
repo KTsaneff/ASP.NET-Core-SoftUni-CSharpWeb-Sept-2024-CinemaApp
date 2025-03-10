@@ -8,7 +8,7 @@ namespace CinemaApp.Web.ViewModels.Tickets
         public Guid CinemaId { get; set; }
 
         [Required]
-        public Guid MovieId { get; set; }
+        public Guid MovieId { get; set; }        
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Please select at least one ticket.")]
