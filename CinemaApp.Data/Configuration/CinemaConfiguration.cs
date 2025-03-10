@@ -31,16 +31,19 @@
             {
                 new Cinema()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Cinema city",
                     Location = "Sofia"
                 },
                 new Cinema()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Cinema city",
                     Location = "Plovdiv"
                 },
                 new Cinema()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Cinemax",
                     Location = "Varna"
                 }
