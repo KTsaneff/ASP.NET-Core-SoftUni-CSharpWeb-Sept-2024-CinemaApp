@@ -1,6 +1,6 @@
 # 🎬 CinemaApp – ASP.NET Core MVC Project
 
-## 🏁 Overview
+## 🌟 Overview
 
 **CinemaApp** is a learning project developed in ASP.NET Core MVC as part of the SoftUni C# Web Developer Path (September 2024 edition). It provides functionality for managing movies, cinemas, watchlists, and ticket purchases with a clean architecture and layered structure.
 
@@ -37,7 +37,7 @@
 
 ---
 
-## 📈 Features
+## 📊 Features
 
 ### Public (Not Logged In)
 
@@ -111,7 +111,47 @@ dotnet test
 
 ## 📸 Screenshots
 
-*(You can add screenshots here)*
+### Home Views
+
+* ![Home - Visitor](Assets/HomePage_VisitorView.png)
+* ![Home - User](Assets/HomePage_UserView.png)
+* ![Home - Manager](Assets/HomePage_ManagerView.png)
+* ![Home - Admin](Assets/HomePage_AdminView.png)
+
+### Movie Browsing
+
+* ![Browse Movies - Visitor](Assets/BrowseMovies_VisitorView.png)
+* ![Browse Movies - User](Assets/BrowseMovies_UserView.png)
+
+### Cinemas & Programs
+
+* ![All Cinemas - User](Assets/AllCinemas_UserView.png)
+* ![View Program - User](Assets/ViewProgram_UserView.png)
+
+### Movie Details & Watchlist
+
+* ![Movie Details - User](Assets/MovieDetails_UserView.png)
+* ![Watchlist - User](Assets/MyWatchlist_UserView.png)
+
+### Tickets
+
+* ![Buy Ticket - User](Assets/BuyTicket_UserView.png)
+* ![My Tickets - User](Assets/MyTickets_UserView.png)
+
+### Manager Views
+
+* ![Program Setup](Assets/ProgramSetup_ManagerView.png)
+* ![Adjust Showtimes](Assets/AdjustShowtimes_ManagerView.png)
+* ![Configure Showtimes](Assets/ConfigureShowtimes_ManagerView.png)
+* ![Configure Program](Assets/ConfigureProgram_ManagerView.png)
+* ![Set Ticket Availability](Assets/SetTicketsAvailability_ManagerView.png)
+* ![Manage Tickets Availability](Assets/ManageTicketsAvailability_ManagerView.png)
+
+### Admin Views
+
+* ![Manage Cinemas](Assets/ManageCinemas_AdminView.png)
+* ![Manage Movies](Assets/ManageMovies_AdminView.png)
+* ![User Management](Assets/UsersManagement_AdminView.png)
 
 ---
 
