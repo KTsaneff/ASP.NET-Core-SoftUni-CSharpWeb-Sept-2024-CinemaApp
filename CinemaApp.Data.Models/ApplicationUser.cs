@@ -6,7 +6,6 @@
     {
         public ApplicationUser()
         {
-            // ReSharper disable once VirtualMemberCallInConstructor
             this.Id = Guid.NewGuid();
         }
 
