@@ -99,16 +99,6 @@ Press **F5** or click **Start Debugging** in Visual Studio.
 
 ---
 
-## 🧪 Running Tests
-
-If unit tests are available:
-
-```bash
-dotnet test
-```
-
----
-
 ## 📸 Screenshots
 
 ### Home Views
