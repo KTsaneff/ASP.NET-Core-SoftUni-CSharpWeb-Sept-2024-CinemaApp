@@ -35,6 +35,14 @@
 | Manager | Manage movies, cinemas, and ticket settings |
 | User    | Add to watchlist, buy tickets, view tickets |
 
+### ✅ Default Seeded Accounts:
+
+| Role    | Email                  | Password   |
+| ------- | ---------------------- | ---------- |
+| Admin   | admin@example.com      | Admin@123  |
+| Manager | appManager@example.com | 123asd     |
+| User    | appUser@example.com    | 123asd     |
+
 ---
 
 ## 📊 Features
