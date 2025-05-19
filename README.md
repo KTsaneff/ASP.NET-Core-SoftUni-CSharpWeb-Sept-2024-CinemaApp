@@ -19,9 +19,9 @@
 
 ## 🛠 Technologies Used
 
-* ASP.NET Core MVC 7.0+
+* ASP.NET Core MVC 8.0
 * Entity Framework Core
-* SQL Server / SQLite
+* SQL Server
 * ASP.NET Identity
 * Bootstrap 5 (UI Styling)
 
