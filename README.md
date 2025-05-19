@@ -167,4 +167,4 @@ This project helps students learn:
 
 ## 📄 License
 
-MIT License (if applicable)
+MIT License
