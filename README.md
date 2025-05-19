@@ -157,12 +157,6 @@ This project helps students learn:
 
 ---
 
-## 📬 Contributions
-
-This project is part of a course and not open for contributions at this time.
-
----
-
 ## 📄 License
 
 MIT License (if applicable)
